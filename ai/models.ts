@@ -10,20 +10,20 @@ export interface Model {
 export const models: Array<Model> = [
   {
     id: 'gpt-4o-mini',
-    label: 'GPT 4o mini',
-    apiIdentifier: 'gpt-4o-mini',
+    label: 'GPT-4o mini',
+    apiIdentifier: 'openai/gpt-4o-mini',
     description: 'Small model for fast, lightweight tasks',
   },
   {
     id: 'gpt-4o',
-    label: 'GPT 4o',
-    apiIdentifier: 'gpt-4o',
+    label: 'GPT-4o',
+    apiIdentifier: 'openai/gpt-4o',
     description: 'For complex, multi-step tasks',
   },
   {
     id: 'gpt-4o-canvas',
-    label: 'GPT 4o with Canvas',
-    apiIdentifier: 'gpt-4o',
+    label: 'GPT-4o with Canvas',
+    apiIdentifier: 'openai/gpt-4o',
     description: 'Collaborate with writing',
   },
 ] as const;
