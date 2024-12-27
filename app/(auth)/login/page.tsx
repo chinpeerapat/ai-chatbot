@@ -5,21 +5,22 @@ import { useRouter } from 'next/navigation';
 import { useActionState, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-import { AuthForm } from '@/components/custom/auth-form';
-import { SubmitButton } from '@/components/custom/submit-button';
+import { AuthForm } from '@/components/auth-form';
+import { SubmitButton } from '@/components/submit-button';
 
-import { login, LoginActionState } from '../actions';
+import { login, type LoginActionState } from '../actions';
 
 export default function Page() {
   const router = useRouter();
 
   const [email, setEmail] = useState('');
+  const [isSuccessful, setIsSuccessful] = useState(false);
 
   const [state, formAction] = useActionState<LoginActionState, FormData>(
     login,
     {
       status: 'idle',
-    }
+    },
   );
 
   useEffect(() => {
@@ -28,6 +29,7 @@ export default function Page() {
     } else if (state.status === 'invalid_data') {
       toast.error('Failed validating your submission!');
     } else if (state.status === 'success') {
+      setIsSuccessful(true);
       router.refresh();
     }
   }, [state.status, router]);
@@ -47,7 +49,7 @@ export default function Page() {
           </p>
         </div>
         <AuthForm action={handleSubmit} defaultEmail={email}>
-          <SubmitButton>Sign in</SubmitButton>
+          <SubmitButton isSuccessful={isSuccessful}>Sign in</SubmitButton>
           <p className="text-center text-sm text-gray-600 mt-4 dark:text-zinc-400">
             {"Don't have an account? "}
             <Link
