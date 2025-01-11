@@ -19,6 +19,8 @@ import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { MessageEditor } from './message-editor';
 import { DocumentPreview } from './document-preview';
+import { SearchResults } from './search-results';
+import { ExtractResults } from './extract-results';
 
 const PurePreviewMessage = ({
   chatId,
@@ -152,6 +154,29 @@ const PurePreviewMessage = ({
                             type="request-suggestions"
                             result={result}
                             isReadonly={isReadonly}
+                          />
+                        ) : toolName === 'search' ? (
+                          <SearchResults
+                            results={result.data.map((item: any) => ({
+                              title: item.title,
+                              url: item.url,
+                              description: item.description,
+                              source: new URL(item.url).hostname,
+                            }))}
+                          />
+                        ) : toolName === 'extract' ? (
+                          <ExtractResults
+                            results={
+                              Array.isArray(result.data)
+                                ? result.data.map((item: any) => ({
+                                    url: item.url,
+                                    data: item.data,
+                                  }))
+                                : {
+                                    url: args.urls[0],
+                                    data: result.data,
+                                  }
+                            }
                           />
                         ) : (
                           <pre>{JSON.stringify(result, null, 2)}</pre>

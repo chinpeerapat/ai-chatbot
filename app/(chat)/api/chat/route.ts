@@ -32,6 +32,7 @@ import {
 } from '@/lib/utils';
 
 import { generateTitleFromUserMessage } from '../../actions';
+import FirecrawlApp from '@mendable/firecrawl-js';
 
 export const maxDuration = 60;
 
@@ -39,7 +40,9 @@ type AllowedTools =
   | 'createDocument'
   | 'updateDocument'
   | 'requestSuggestions'
-  | 'getWeather';
+  | 'getWeather'
+  | 'search'
+  | 'extract';
 
 const blocksTools: AllowedTools[] = [
   'createDocument',
@@ -47,7 +50,7 @@ const blocksTools: AllowedTools[] = [
   'requestSuggestions',
 ];
 
-const weatherTools: AllowedTools[] = ['getWeather'];
+const weatherTools: AllowedTools[] = ['getWeather', 'search', 'extract'];
 
 const allTools: AllowedTools[] = [...blocksTools, ...weatherTools];
 
@@ -547,7 +550,90 @@ export async function POST(request: Request) {
               };
             },
           },
+          search: {
+            description:
+              'Search for web pages. Normally you should call the extract tool after this one.',
+            parameters: z.object({
+              query: z
+                .string()
+                .describe('Search query to find relevant web pages'),
+              maxResults: z
+                .number()
+                .optional()
+                .describe('Maximum number of results to return (default 10)'),
+            }),
+            execute: async ({ query, maxResults = 5 }) => {
+              const app = new FirecrawlApp({
+                apiKey: process.env.FIRECRAWL_API_KEY || '',
+              });
+
+              try {
+                const searchResult = await app.search(query);
+
+                if (!searchResult.success) {
+                  return {
+                    error: `Search failed: ${searchResult.error}`,
+                    success: false,
+                  };
+                }
+
+                return {
+                  data: searchResult.data,
+                  success: true,
+                };
+              } catch (error: any) {
+                return {
+                  error: `Search failed: ${error.message}`,
+                  success: false,
+                };
+              }
+            },
+          },
+          extract: {
+            description:
+              'Extract structured data from web pages. Use this to get wahtever data you need from a URL. Any time someone needs to gather data from something, use this tool.',
+            parameters: z.object({
+              urls: z
+                .array(z.string())
+                .describe('Array of URLs to extract data from'),
+              prompt: z
+                .string()
+                .describe('Description of what data to extract'),
+            }),
+            execute: async ({ urls, prompt }) => {
+              const app = new FirecrawlApp({
+                apiKey: process.env.FIRECRAWL_API_KEY || '',
+              });
+
+              try {
+                console.log(urls);
+                const scrapeResult = await app.extract(urls, {
+                  prompt,
+                });
+
+                console.log(scrapeResult);
+
+                if (!scrapeResult.success) {
+                  return {
+                    error: `Failed to extract data: ${scrapeResult.error}`,
+                    success: false,
+                  };
+                }
+
+                return {
+                  data: scrapeResult.data,
+                  success: true,
+                };
+              } catch (error: any) {
+                return {
+                  error: `Extraction failed: ${error.message}`,
+                  success: false,
+                };
+              }
+            },
+          },
         },
+
         onFinish: async ({ response }) => {
           if (session.user?.id) {
             try {
