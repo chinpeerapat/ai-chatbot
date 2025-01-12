@@ -167,16 +167,19 @@ const PurePreviewMessage = ({
                         ) : toolName === 'extract' ? (
                           <ExtractResults
                             results={
-                              Array.isArray(result.data)
-                                ? result.data.map((item: any) => ({
-                                    url: item.url,
-                                    data: item.data,
-                                  }))
-                                : {
-                                    url: args.urls[0],
-                                    data: result.data,
-                                  }
+                              state === 'result' && result.data
+                                ? Array.isArray(result.data)
+                                  ? result.data.map((item: any) => ({
+                                      url: item.url,
+                                      data: item.data,
+                                    }))
+                                  : {
+                                      url: args.urls[0],
+                                      data: result.data,
+                                    }
+                                : []
                             }
+                            isLoading={false}
                           />
                         ) : (
                           <pre>{JSON.stringify(result, null, 2)}</pre>
@@ -207,6 +210,8 @@ const PurePreviewMessage = ({
                           args={args}
                           isReadonly={isReadonly}
                         />
+                      ) : toolName === 'extract' ? (
+                        <ExtractResults results={[]} isLoading={true} />
                       ) : null}
                     </div>
                   );

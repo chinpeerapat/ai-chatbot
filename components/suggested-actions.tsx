@@ -18,22 +18,26 @@ function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
     {
       title: 'Extract company info',
       label: 'from any website',
-      action: 'Extract the company mission, values and key features from this website: ',
+      action:
+        'Extract the company mission, values and key features from this website: ',
     },
     {
       title: 'Find pricing details',
       label: 'on any product page',
-      action: 'Extract all pricing information and plan features from this page: ',
+      action:
+        'Extract all pricing information and plan features from this page: ',
     },
     {
       title: 'Get contact details',
       label: 'from business websites',
-      action: 'Extract all contact information including email, phone and address from: ',
+      action:
+        'Extract all contact information including email, phone and address from: ',
     },
     {
       title: 'Summarize job listings',
       label: 'from career pages',
-      action: 'Extract the key requirements, responsibilities and benefits from this job posting: ',
+      action:
+        'Extract the key requirements, responsibilities and benefits from this job posting: ',
     },
   ];
 

@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import { ExternalLinkIcon } from './icons';
-import { ChevronRight, FileText } from 'lucide-react';
+import { ChevronRight, FileText, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 
 interface ExtractedData {
@@ -13,11 +13,13 @@ interface ExtractedData {
 interface ExtractResultsProps {
   results: ExtractedData | ExtractedData[];
   title?: string;
+  isLoading?: boolean;
 }
 
 export function ExtractResults({
   results,
   title = 'Extracted Data...',
+  isLoading = false,
 }: ExtractResultsProps) {
   const resultsArray = Array.isArray(results) ? results : [results];
   const [openItems, setOpenItems] = useState<Record<number, boolean>>({});
@@ -27,6 +29,22 @@ export function ExtractResults({
     e.stopPropagation();
     setOpenItems((prev) => ({ ...prev, [i]: !prev[i] }));
   };
+
+  if (isLoading) {
+    return (
+      <div className="w-full">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-sm font-medium">
+            Using Firecrawl to extract data...
+          </span>
+        </div>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Loader2 size={16} className="animate-spin" />
+          <span>Extracting data...</span>
+        </div>
+      </div>
+    );
+  }
 
   if (!resultsArray.length) return null;
 

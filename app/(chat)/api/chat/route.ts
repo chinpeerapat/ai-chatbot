@@ -642,9 +642,7 @@ export async function POST(request: Request) {
               const app = new FirecrawlApp({
                 apiKey: process.env.FIRECRAWL_API_KEY || '',
               });
-
               try {
-                console.log(urls);
                 const scrapeResult = await app.extract(urls, {
                   prompt,
                 });
