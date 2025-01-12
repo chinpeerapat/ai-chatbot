@@ -2,14 +2,15 @@ import type { Metadata } from 'next';
 import { Toaster } from 'sonner';
 
 import { ThemeProvider } from '@/components/theme-provider';
-import { Analytics } from "@vercel/analytics/react"
+import { Analytics } from '@vercel/analytics/react';
 
 import './globals.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://extract.chat'),
   title: 'Extract Chat - by Firecrawl',
-  description: 'Extract Chat allows you to extract information from any website with the help of an AI chatbot.',
+  description:
+    'Extract Chat allows you to extract information from any website with the help of an AI chatbot.',
 };
 
 export const viewport = {

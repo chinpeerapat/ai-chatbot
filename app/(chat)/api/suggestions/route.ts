@@ -17,21 +17,25 @@ export async function GET(request: Request) {
       const result = await signIn('credentials', {
         redirect: false,
       });
-      
+
       if (result?.error) {
         console.error('Failed to create anonymous session:', result.error);
-        return new Response('Failed to create anonymous session', { status: 500 });
+        return new Response('Failed to create anonymous session', {
+          status: 500,
+        });
       }
-      
+
       session = await auth();
-      
+
       if (!session?.user) {
         console.error('Failed to get session after creation');
         return new Response('Failed to create session', { status: 500 });
       }
     } catch (error) {
       console.error('Error creating anonymous session:', error);
-      return new Response('Failed to create anonymous session', { status: 500 });
+      return new Response('Failed to create anonymous session', {
+        status: 500,
+      });
     }
   }
 

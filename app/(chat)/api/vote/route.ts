@@ -10,14 +10,14 @@ async function getOrCreateSession() {
       const result = await signIn('credentials', {
         redirect: false,
       });
-      
+
       if (result?.error) {
         console.error('Failed to create anonymous session:', result.error);
         return null;
       }
-      
+
       session = await auth();
-      
+
       if (!session?.user) {
         console.error('Failed to get session after creation');
         return null;

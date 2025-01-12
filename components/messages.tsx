@@ -43,7 +43,7 @@ function PureMessages({
         `Rate limit exceeded. Please wait ${resetInSeconds} seconds before trying again.`,
         {
           duration: Math.min(resetInSeconds * 1000, 5000),
-        }
+        },
       );
     }
   };

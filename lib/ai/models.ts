@@ -13,7 +13,7 @@ export const models: Array<Model> = [
     label: 'GPT 4o mini',
     apiIdentifier: 'gpt-4o-mini',
     description: 'Small model for fast, lightweight tasks',
-  }
+  },
   // {
   //   id: 'gpt-4o',
   //   label: 'GPT 4o',

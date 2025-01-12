@@ -71,21 +71,25 @@ export async function POST(request: Request) {
       const result = await signIn('credentials', {
         redirect: false,
       });
-      
+
       if (result?.error) {
         console.error('Failed to create anonymous session:', result.error);
-        return new Response('Failed to create anonymous session', { status: 500 });
+        return new Response('Failed to create anonymous session', {
+          status: 500,
+        });
       }
-      
+
       session = await auth();
-      
+
       if (!session?.user) {
         console.error('Failed to get session after creation');
         return new Response('Failed to create session', { status: 500 });
       }
     } catch (error) {
       console.error('Error creating anonymous session:', error);
-      return new Response('Failed to create anonymous session', { status: 500 });
+      return new Response('Failed to create anonymous session', {
+        status: 500,
+      });
     }
   }
 
@@ -95,13 +99,11 @@ export async function POST(request: Request) {
 
   // Apply rate limiting
   const identifier = session.user.id;
-  const { success, limit, reset, remaining } = await rateLimiter.limit(identifier);
+  const { success, limit, reset, remaining } =
+    await rateLimiter.limit(identifier);
 
   if (!success) {
-    return new Response(
-      `Too many requests`,
-      { status: 429 }
-    );
+    return new Response(`Too many requests`, { status: 429 });
   }
 
   const model = models.find((model) => model.id === modelId);

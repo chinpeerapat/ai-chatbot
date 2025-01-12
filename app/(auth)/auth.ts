@@ -12,7 +12,7 @@ interface ExtendedSession extends Session {
 async function createAnonymousUser() {
   const anonymousEmail = `anon_${Date.now()}@anonymous.user`;
   const anonymousPassword = `anon_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-  
+
   try {
     await createUser(anonymousEmail, anonymousPassword);
     const [user] = await getUser(anonymousEmail);

@@ -51,7 +51,9 @@ export function Chat({
     },
     onError: async (error: Error) => {
       if (error.message.includes('Too many requests')) {
-        toast.error('Too many requests. Please wait a few seconds before sending another message.');
+        toast.error(
+          'Too many requests. Please wait a few seconds before sending another message.',
+        );
       } else {
         toast.error('An error occurred while sending your message.');
       }
