@@ -86,7 +86,7 @@ function PureChatHeader({
         asChild
       >
         <Link
-          href="https://firecrawl.dev/api-key"
+          href="https://firecrawl.dev/"
           target="_blank"
         >
           <span className="flex items-center gap-2">
