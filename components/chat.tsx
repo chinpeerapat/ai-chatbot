@@ -4,6 +4,7 @@ import type { Attachment, Message } from 'ai';
 import { useChat } from 'ai/react';
 import { useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
+import { toast } from 'sonner';
 
 import { ChatHeader } from '@/components/chat-header';
 import type { Vote } from '@/lib/db/schema';
@@ -47,6 +48,13 @@ export function Chat({
     experimental_throttle: 100,
     onFinish: () => {
       mutate('/api/history');
+    },
+    onError: async (error: Error) => {
+      if (error.message.includes('Too many requests')) {
+        toast.error('Too many requests. Please wait a few seconds before sending another message.');
+      } else {
+        toast.error('An error occurred while sending your message.');
+      }
     },
   });
 

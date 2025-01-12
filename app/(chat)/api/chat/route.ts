@@ -7,9 +7,10 @@ import {
 } from 'ai';
 import { z } from 'zod';
 
-import { auth } from '@/app/(auth)/auth';
+import { auth, signIn } from '@/app/(auth)/auth';
 import { customModel } from '@/lib/ai';
 import { models } from '@/lib/ai/models';
+import { rateLimiter } from '@/lib/rate-limit';
 import {
   codePrompt,
   systemPrompt,
@@ -62,10 +63,45 @@ export async function POST(request: Request) {
   }: { id: string; messages: Array<Message>; modelId: string } =
     await request.json();
 
-  const session = await auth();
+  let session = await auth();
 
-  if (!session || !session.user || !session.user.id) {
-    return new Response('Unauthorized', { status: 401 });
+  // If no session exists, create an anonymous session
+  if (!session?.user) {
+    try {
+      const result = await signIn('credentials', {
+        redirect: false,
+      });
+      
+      if (result?.error) {
+        console.error('Failed to create anonymous session:', result.error);
+        return new Response('Failed to create anonymous session', { status: 500 });
+      }
+      
+      session = await auth();
+      
+      if (!session?.user) {
+        console.error('Failed to get session after creation');
+        return new Response('Failed to create session', { status: 500 });
+      }
+    } catch (error) {
+      console.error('Error creating anonymous session:', error);
+      return new Response('Failed to create anonymous session', { status: 500 });
+    }
+  }
+
+  if (!session?.user?.id) {
+    return new Response('Failed to create session', { status: 500 });
+  }
+
+  // Apply rate limiting
+  const identifier = session.user.id;
+  const { success, limit, reset, remaining } = await rateLimiter.limit(identifier);
+
+  if (!success) {
+    return new Response(
+      `Too many requests`,
+      { status: 429 }
+    );
   }
 
   const model = models.find((model) => model.id === modelId);
@@ -685,10 +721,18 @@ export async function DELETE(request: Request) {
     return new Response('Not Found', { status: 404 });
   }
 
-  const session = await auth();
+  let session = await auth();
 
-  if (!session || !session.user) {
-    return new Response('Unauthorized', { status: 401 });
+  // If no session exists, create an anonymous session
+  if (!session?.user) {
+    await signIn('credentials', {
+      redirect: false,
+    });
+    session = await auth();
+  }
+
+  if (!session?.user?.id) {
+    return new Response('Failed to create session', { status: 500 });
   }
 
   try {
