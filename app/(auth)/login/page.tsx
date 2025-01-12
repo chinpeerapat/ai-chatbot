@@ -10,7 +10,6 @@ import { SubmitButton } from '@/components/submit-button';
 import { Button } from '@/components/ui/button';
 
 import { login, type LoginActionState } from '../actions';
-import { signIn } from '../auth';
 
 export default function Page() {
   const router = useRouter();
@@ -41,16 +40,16 @@ export default function Page() {
     formAction(formData);
   };
 
-  const handleAnonymousLogin = async () => {
-    try {
-      await signIn('credentials', {
-        redirect: false,
-      });
-      router.refresh();
-    } catch (error) {
-      toast.error('Failed to continue as guest');
-    }
-  };
+  // const handleAnonymousLogin = async () => {
+  //   try {
+  //     await signIn('credentials', {
+  //       redirect: false,
+  //     });
+  //     router.refresh();
+  //   } catch (error) {
+  //     toast.error('Failed to continue as guest');
+  //   }
+  // };
 
   return (
     <div className="flex h-dvh w-screen items-start pt-12 md:pt-0 md:items-center justify-center bg-background">
@@ -68,19 +67,19 @@ export default function Page() {
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t" />
               </div>
-              <div className="relative flex justify-center text-xs uppercase">
+              {/* <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-background px-2 text-muted-foreground">
                   Or
                 </span>
-              </div>
+              </div> */}
             </div>
-            <Button
+            {/* <Button
               variant="outline"
               onClick={handleAnonymousLogin}
               type="button"
             >
               Continue as Guest
-            </Button>
+            </Button> */}
           </div>
           <p className="text-center text-sm text-gray-600 mt-4 dark:text-zinc-400">
             {"Don't have an account? "}
