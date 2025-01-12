@@ -7,9 +7,9 @@ import { Analytics } from "@vercel/analytics/react"
 import './globals.css';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://chat.vercel.ai'),
-  title: 'Next.js Chatbot Template',
-  description: 'Next.js chatbot template using the AI SDK.',
+  metadataBase: new URL('https://extract.chat'),
+  title: 'Extract Chat - by Firecrawl',
+  description: 'Extract Chat allows you to extract information from any website with the help of an AI chatbot.',
 };
 
 export const viewport = {
