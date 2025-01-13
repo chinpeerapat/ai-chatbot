@@ -634,7 +634,8 @@ export async function POST(request: Request) {
               urls: z
                 .array(z.string())
                 .describe(
-                  'Array of URLs to extract data from, include a /* at the end of each URL if you think you need to search for other pages insdes that URL to extract the full data from',
+                  'Array of URLs to extract data from',
+                  // , include a /* at the end of each URL if you think you need to search for other pages insdes that URL to extract the full data from',
                 ),
               prompt: z
                 .string()
