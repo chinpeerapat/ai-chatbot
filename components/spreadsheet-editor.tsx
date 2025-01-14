@@ -377,7 +377,7 @@ const PureSpreadsheetEditor = ({
 
   if (!isCurrentVersion || status === 'streaming') {
     return (
-      <div className="w-full overflow-x-auto">
+      <div className="w-full overflow-x-auto font-mono">
         <table className="min-w-full border-collapse">
           <thead>
             <tr>
@@ -517,7 +517,7 @@ const PureSpreadsheetEditor = ({
           {data.rows.map((row, rowIndex) => (
             <tr
               key={rowIndex}
-              className={cn(hoveredRow === rowIndex && 'bg-muted/5')}
+              className={cn(hoveredRow === rowIndex && 'bg-muted/5', 'font-mono')}
               onMouseEnter={() => setHoveredRow(rowIndex)}
               onMouseLeave={() => setHoveredRow(null)}
             >

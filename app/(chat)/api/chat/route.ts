@@ -646,6 +646,7 @@ export async function POST(request: Request) {
                 apiKey: process.env.FIRECRAWL_API_KEY || '',
               });
               try {
+                console.log(urls);
                 const scrapeResult = await app.extract(urls, {
                   prompt,
                 });
@@ -664,6 +665,9 @@ export async function POST(request: Request) {
                   success: true,
                 };
               } catch (error: any) {
+                console.error('Extraction error:', error);
+                console.error(error.message);
+                console.error(error.error);
                 return {
                   error: `Extraction failed: ${error.message}`,
                   success: false,

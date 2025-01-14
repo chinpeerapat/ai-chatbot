@@ -27,8 +27,8 @@ importers:
         specifier: ^6.35.3
         version: 6.35.3
       '@mendable/firecrawl-js':
-        specifier: ^1.12.0
-        version: 1.12.0(ws@8.18.0(bufferutil@4.0.8))
+        specifier: ^1.13.0
+        version: 1.13.0(ws@8.18.0(bufferutil@4.0.8))
       '@radix-ui/react-alert-dialog':
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@19.0.0-rc-45804af1-20241021(react@19.0.0-rc-45804af1-20241021))(react@19.0.0-rc-45804af1-20241021)
@@ -1031,8 +1031,8 @@ packages:
   '@marijn/find-cluster-break@1.0.2':
     resolution: {integrity: sha512-l0h88YhZFyKdXIFNfSWpyjStDjGHwZ/U7iobcK1cQQD8sejsONdQtTVU+1wVN1PBw40PiiHB1vA5S7VTfQiP9g==}
 
-  '@mendable/firecrawl-js@1.12.0':
-    resolution: {integrity: sha512-M9TrZ7yWSic8OUAG0z7RfKBBzFQ9pXdDW0elofK1c/HkdrZb24O2Kpy1M5tR3HaG4ZZ4P+8apawdftkAtH+otg==}
+  '@mendable/firecrawl-js@1.13.0':
+    resolution: {integrity: sha512-gsVh1UDxdcV9hL5ttESr+noObRcVHdhVDb+9eJLw7IkvdovX7t7lxg0zroNifsvfNSvdzjB0FpnekXT7JIbVIQ==}
 
   '@neondatabase/serverless@0.9.5':
     resolution: {integrity: sha512-siFas6gItqv6wD/pZnvdu34wEqgG3nSE6zWZdq5j2DEsa+VvX8i/5HXJOo06qrw5axPXn+lGCxeR+NLaSPIXug==}
@@ -4396,7 +4396,7 @@ snapshots:
 
   '@marijn/find-cluster-break@1.0.2': {}
 
-  '@mendable/firecrawl-js@1.12.0(ws@8.18.0(bufferutil@4.0.8))':
+  '@mendable/firecrawl-js@1.13.0(ws@8.18.0(bufferutil@4.0.8))':
     dependencies:
       axios: 1.7.9
       isows: 1.0.6(ws@8.18.0(bufferutil@4.0.8))
