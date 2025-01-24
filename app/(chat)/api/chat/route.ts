@@ -53,7 +53,7 @@ const blocksTools: AllowedTools[] = [
 
 const firecrawlTools: AllowedTools[] = ['search', 'extract', 'scrape'];
 
-const allTools: AllowedTools[] = [...blocksTools, ...firecrawlTools];
+const allTools: AllowedTools[] = [...firecrawlTools];
 
 const app = new FirecrawlApp({
   apiKey: process.env.FIRECRAWL_API_KEY || '',
