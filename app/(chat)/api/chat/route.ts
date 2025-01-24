@@ -41,9 +41,9 @@ type AllowedTools =
   | 'createDocument'
   | 'updateDocument'
   | 'requestSuggestions'
-  | 'getWeather'
   | 'search'
-  | 'extract';
+  | 'extract'
+  | 'scrape';
 
 const blocksTools: AllowedTools[] = [
   'createDocument',
@@ -51,9 +51,13 @@ const blocksTools: AllowedTools[] = [
   'requestSuggestions',
 ];
 
-const weatherTools: AllowedTools[] = ['getWeather', 'search', 'extract'];
+const firecrawlTools: AllowedTools[] = ['search', 'extract', 'scrape'];
 
-const allTools: AllowedTools[] = [...blocksTools, ...weatherTools];
+const allTools: AllowedTools[] = [...blocksTools, ...firecrawlTools];
+
+const app = new FirecrawlApp({
+  apiKey: process.env.FIRECRAWL_API_KEY || '',
+});
 
 export async function POST(request: Request) {
   const {
@@ -148,21 +152,6 @@ export async function POST(request: Request) {
         maxSteps: 5,
         experimental_activeTools: allTools,
         tools: {
-          getWeather: {
-            description: 'Get the current weather at a location',
-            parameters: z.object({
-              latitude: z.number(),
-              longitude: z.number(),
-            }),
-            execute: async ({ latitude, longitude }) => {
-              const response = await fetch(
-                `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m&hourly=temperature_2m&daily=sunrise,sunset&timezone=auto`,
-              );
-
-              const weatherData = await response.json();
-              return weatherData;
-            },
-          },
           createDocument: {
             description:
               'Create a document for a writing activity. This tool will call other functions that will generate the contents of the document based on the title and kind.',
@@ -438,7 +427,9 @@ export async function POST(request: Request) {
                     
                     Example response format:
                     {"headers":["Name","Email","Phone"],"rows":[["John","john@example.com","123-456-7890"],["Jane","jane@example.com","098-765-4321"]]}`,
-                  prompt: `${description}\n\nChat History:\n${coreMessages.map((msg) => msg.content).join('\n')}`,
+                  prompt: `${description}\n\nChat History:\n${coreMessages
+                    .map((msg) => msg.content)
+                    .join('\n')}`,
                   schema: z.object({
                     headers: z
                       .array(z.string())
@@ -590,7 +581,7 @@ export async function POST(request: Request) {
           },
           search: {
             description:
-              'Search for web pages. Normally you should call the extract tool after this one.',
+              "Search for web pages. Normally you should call the extract tool after this one to get a spceific data point if search doesn't the exact data you need.",
             parameters: z.object({
               query: z
                 .string()
@@ -601,10 +592,6 @@ export async function POST(request: Request) {
                 .describe('Maximum number of results to return (default 10)'),
             }),
             execute: async ({ query, maxResults = 5 }) => {
-              const app = new FirecrawlApp({
-                apiKey: process.env.FIRECRAWL_API_KEY || '',
-              });
-
               try {
                 const searchResult = await app.search(query);
 
@@ -631,20 +618,15 @@ export async function POST(request: Request) {
             description:
               'Extract structured data from web pages. Use this to get wahtever data you need from a URL. Any time someone needs to gather data from something, use this tool.',
             parameters: z.object({
-              urls: z
-                .array(z.string())
-                .describe(
-                  'Array of URLs to extract data from',
-                  // , include a /* at the end of each URL if you think you need to search for other pages insdes that URL to extract the full data from',
-                ),
+              urls: z.array(z.string()).describe(
+                'Array of URLs to extract data from',
+                // , include a /* at the end of each URL if you think you need to search for other pages insdes that URL to extract the full data from',
+              ),
               prompt: z
                 .string()
                 .describe('Description of what data to extract'),
             }),
             execute: async ({ urls, prompt }) => {
-              const app = new FirecrawlApp({
-                apiKey: process.env.FIRECRAWL_API_KEY || '',
-              });
               try {
                 console.log(urls);
                 const scrapeResult = await app.extract(urls, {
@@ -675,8 +657,43 @@ export async function POST(request: Request) {
               }
             },
           },
-        },
+          scrape: {
+            description:
+              'Scrape web pages. Use this to get from a page when you have the url.',
+            parameters: z.object({
+              url: z.string().describe('URL to scrape'),
+            }),
+            execute: async ({ url }: { url: string }) => {
+              try {
+                const scrapeResult = await app.scrapeUrl(url);
 
+                console.log(scrapeResult);
+
+                if (!scrapeResult.success) {
+                  return {
+                    error: `Failed to extract data: ${scrapeResult.error}`,
+                    success: false,
+                  };
+                }
+
+                return {
+                  data:
+                    scrapeResult.markdown ??
+                    'Could get the page content, try using search or extract',
+                  success: true,
+                };
+              } catch (error: any) {
+                console.error('Extraction error:', error);
+                console.error(error.message);
+                console.error(error.error);
+                return {
+                  error: `Extraction failed: ${error.message}`,
+                  success: false,
+                };
+              }
+            },
+          },
+        },
         onFinish: async ({ response }) => {
           if (session.user?.id) {
             try {

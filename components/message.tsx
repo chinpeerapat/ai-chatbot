@@ -21,6 +21,7 @@ import { MessageEditor } from './message-editor';
 import { DocumentPreview } from './document-preview';
 import { SearchResults } from './search-results';
 import { ExtractResults } from './extract-results';
+import { ScrapeResults } from './scrape-results';
 
 const PurePreviewMessage = ({
   chatId,
@@ -181,6 +182,12 @@ const PurePreviewMessage = ({
                             }
                             isLoading={false}
                           />
+                        ) : toolName === 'scrape' ? (
+                          <ScrapeResults
+                            url={args.url}
+                            data={result.data}
+                            isLoading={false}
+                          />
                         ) : (
                           <pre>{JSON.stringify(result, null, 2)}</pre>
                         )}
@@ -212,6 +219,12 @@ const PurePreviewMessage = ({
                         />
                       ) : toolName === 'extract' ? (
                         <ExtractResults results={[]} isLoading={true} />
+                      ) : toolName === 'scrape' ? (
+                        <ScrapeResults
+                          url={args.url}
+                          data=""
+                          isLoading={true}
+                        />
                       ) : null}
                     </div>
                   );

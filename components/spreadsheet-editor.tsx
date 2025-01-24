@@ -517,7 +517,10 @@ const PureSpreadsheetEditor = ({
           {data.rows.map((row, rowIndex) => (
             <tr
               key={rowIndex}
-              className={cn(hoveredRow === rowIndex && 'bg-muted/5', 'font-mono')}
+              className={cn(
+                hoveredRow === rowIndex && 'bg-muted/5',
+                'font-mono',
+              )}
               onMouseEnter={() => setHoveredRow(rowIndex)}
               onMouseLeave={() => setHoveredRow(null)}
             >
