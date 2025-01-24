@@ -1,5 +1,5 @@
 
-# AI FireChat
+# Extract.chat
 
 An Open-Source AI Chatbot w/ Firecrawl Integrated - Fork of Vercel's AI Chatbot 
 
