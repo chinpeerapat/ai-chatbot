@@ -14,3 +14,5 @@ export const customModel = (apiIdentifier: string) => {
     middleware: customMiddleware,
   });
 };
+
+export const imageGenerationModel = openai.image('dall-e-3');
