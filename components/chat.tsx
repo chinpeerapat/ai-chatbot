@@ -4,28 +4,28 @@ import type { Attachment, Message } from 'ai';
 import { useChat } from 'ai/react';
 import { useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
+import { toast } from 'sonner';
 
 import { ChatHeader } from '@/components/chat-header';
 import type { Vote } from '@/lib/db/schema';
-import { fetcher, generateUUID } from '@/lib/utils';
+import { fetcher } from '@/lib/utils';
 
 import { Block } from './block';
 import { MultimodalInput } from './multimodal-input';
 import { Messages } from './messages';
 import { VisibilityType } from './visibility-selector';
 import { useBlockSelector } from '@/hooks/use-block';
-import { toast } from 'sonner';
 
 export function Chat({
   id,
   initialMessages,
-  selectedChatModel,
+  selectedModelId,
   selectedVisibilityType,
   isReadonly,
 }: {
   id: string;
   initialMessages: Array<Message>;
-  selectedChatModel: string;
+  selectedModelId: string;
   selectedVisibilityType: VisibilityType;
   isReadonly: boolean;
 }) {
@@ -43,17 +43,20 @@ export function Chat({
     reload,
   } = useChat({
     id,
-    body: { id, selectedChatModel: selectedChatModel },
+    body: { id, modelId: selectedModelId },
     initialMessages,
     experimental_throttle: 100,
-    sendExtraMessageFields: true,
-    generateId: generateUUID,
     onFinish: () => {
       mutate('/api/history');
     },
-    onError: (error) => {
-      console.log(error);
-      toast.error('An error occured, please try again!');
+    onError: async (error: Error) => {
+      if (error.message.includes('Too many requests')) {
+        toast.error(
+          'Too many requests. Please wait a few seconds before sending another message.',
+        );
+      } else {
+        toast.error('An error occurred while sending your message.');
+      }
     },
   });
 
@@ -70,7 +73,7 @@ export function Chat({
       <div className="flex flex-col min-w-0 h-dvh bg-background">
         <ChatHeader
           chatId={id}
-          selectedModelId={selectedChatModel}
+          selectedModelId={selectedModelId}
           selectedVisibilityType={selectedVisibilityType}
           isReadonly={isReadonly}
         />

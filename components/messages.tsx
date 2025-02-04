@@ -5,6 +5,7 @@ import { Overview } from './overview';
 import { memo } from 'react';
 import { Vote } from '@/lib/db/schema';
 import equal from 'fast-deep-equal';
+import { toast } from 'sonner';
 
 interface MessagesProps {
   chatId: string;
@@ -33,6 +34,20 @@ function PureMessages({
   const [messagesContainerRef, messagesEndRef] =
     useScrollToBottom<HTMLDivElement>();
 
+  // Handle rate limit error
+  const handleError = async (error: any) => {
+    if (error?.response?.status === 429) {
+      const data = await error.response.json();
+      const resetInSeconds = Math.ceil((data.reset - Date.now()) / 1000);
+      toast.error(
+        `Rate limit exceeded. Please wait ${resetInSeconds} seconds before trying again.`,
+        {
+          duration: Math.min(resetInSeconds * 1000, 5000),
+        },
+      );
+    }
+  };
+
   return (
     <div
       ref={messagesContainerRef}
@@ -52,7 +67,14 @@ function PureMessages({
               : undefined
           }
           setMessages={setMessages}
-          reload={reload}
+          reload={async (options?: ChatRequestOptions) => {
+            try {
+              return await reload(options);
+            } catch (error) {
+              handleError(error);
+              return null;
+            }
+          }}
           isReadonly={isReadonly}
         />
       ))}

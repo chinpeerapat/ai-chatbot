@@ -8,12 +8,7 @@ import { memo, useMemo, useState } from 'react';
 import type { Vote } from '@/lib/db/schema';
 
 import { DocumentToolCall, DocumentToolResult } from './document';
-import {
-  ChevronDownIcon,
-  LoaderIcon,
-  PencilEditIcon,
-  SparklesIcon,
-} from './icons';
+import { PencilEditIcon, SparklesIcon } from './icons';
 import { Markdown } from './markdown';
 import { MessageActions } from './message-actions';
 import { PreviewAttachment } from './preview-attachment';
@@ -24,7 +19,9 @@ import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { MessageEditor } from './message-editor';
 import { DocumentPreview } from './document-preview';
-import { MessageReasoning } from './message-reasoning';
+import { SearchResults } from './search-results';
+import { ExtractResults } from './extract-results';
+import { ScrapeResults } from './scrape-results';
 
 const PurePreviewMessage = ({
   chatId,
@@ -74,7 +71,7 @@ const PurePreviewMessage = ({
             </div>
           )}
 
-          <div className="flex flex-col gap-4 w-full">
+          <div className="flex flex-col gap-2 w-full">
             {message.experimental_attachments && (
               <div className="flex flex-row justify-end gap-2">
                 {message.experimental_attachments.map((attachment) => (
@@ -86,14 +83,7 @@ const PurePreviewMessage = ({
               </div>
             )}
 
-            {message.reasoning && (
-              <MessageReasoning
-                isLoading={isLoading}
-                reasoning={message.reasoning}
-              />
-            )}
-
-            {(message.content || message.reasoning) && mode === 'view' && (
+            {message.content && mode === 'view' && (
               <div className="flex flex-row gap-2 items-start">
                 {message.role === 'user' && !isReadonly && (
                   <Tooltip>
@@ -166,6 +156,38 @@ const PurePreviewMessage = ({
                             result={result}
                             isReadonly={isReadonly}
                           />
+                        ) : toolName === 'search' ? (
+                          <SearchResults
+                            results={result.data.map((item: any) => ({
+                              title: item.title,
+                              url: item.url,
+                              description: item.description,
+                              source: new URL(item.url).hostname,
+                            }))}
+                          />
+                        ) : toolName === 'extract' ? (
+                          <ExtractResults
+                            results={
+                              state === 'result' && result.data
+                                ? Array.isArray(result.data)
+                                  ? result.data.map((item: any) => ({
+                                      url: item.url,
+                                      data: item.data,
+                                    }))
+                                  : {
+                                      url: args.urls[0],
+                                      data: result.data,
+                                    }
+                                : []
+                            }
+                            isLoading={false}
+                          />
+                        ) : toolName === 'scrape' ? (
+                          <ScrapeResults
+                            url={args.url}
+                            data={result.data}
+                            isLoading={false}
+                          />
                         ) : (
                           <pre>{JSON.stringify(result, null, 2)}</pre>
                         )}
@@ -195,6 +217,14 @@ const PurePreviewMessage = ({
                           args={args}
                           isReadonly={isReadonly}
                         />
+                      ) : toolName === 'extract' ? (
+                        <ExtractResults results={[]} isLoading={true} />
+                      ) : toolName === 'scrape' ? (
+                        <ScrapeResults
+                          url={args.url}
+                          data=""
+                          isLoading={true}
+                        />
                       ) : null}
                     </div>
                   );
@@ -222,8 +252,6 @@ export const PreviewMessage = memo(
   PurePreviewMessage,
   (prevProps, nextProps) => {
     if (prevProps.isLoading !== nextProps.isLoading) return false;
-    if (prevProps.message.reasoning !== nextProps.message.reasoning)
-      return false;
     if (prevProps.message.content !== nextProps.message.content) return false;
     if (
       !equal(

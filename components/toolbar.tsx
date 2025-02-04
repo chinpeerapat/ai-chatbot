@@ -11,7 +11,6 @@ import {
 import {
   type Dispatch,
   memo,
-  ReactNode,
   type SetStateAction,
   useEffect,
   useRef,
@@ -30,20 +29,27 @@ import { sanitizeUIMessages } from '@/lib/utils';
 import {
   ArrowUpIcon,
   CodeIcon,
+  FileIcon,
   LogsIcon,
   MessageIcon,
   PenIcon,
   SparklesIcon,
   StopIcon,
   SummarizeIcon,
+  TerminalIcon,
 } from './icons';
-import { blockDefinitions, BlockKind } from './block';
-import { BlockToolbarItem } from './create-block';
-import { UseChatHelpers } from 'ai/react';
+import { BlockKind } from './block';
 
 type ToolProps = {
+  type:
+    | 'final-polish'
+    | 'request-suggestions'
+    | 'adjust-reading-level'
+    | 'code-review'
+    | 'add-comments'
+    | 'add-logs';
   description: string;
-  icon: ReactNode;
+  icon: JSX.Element;
   selectedTool: string | null;
   setSelectedTool: Dispatch<SetStateAction<string | null>>;
   isToolbarVisible?: boolean;
@@ -53,14 +59,10 @@ type ToolProps = {
     message: Message | CreateMessage,
     chatRequestOptions?: ChatRequestOptions,
   ) => Promise<string | null | undefined>;
-  onClick: ({
-    appendMessage,
-  }: {
-    appendMessage: UseChatHelpers['append'];
-  }) => void;
 };
 
 const Tool = ({
+  type,
   description,
   icon,
   selectedTool,
@@ -69,15 +71,14 @@ const Tool = ({
   setIsToolbarVisible,
   isAnimating,
   append,
-  onClick,
 }: ToolProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
-    if (selectedTool !== description) {
+    if (selectedTool !== type) {
       setIsHovered(false);
     }
-  }, [selectedTool, description]);
+  }, [selectedTool, type]);
 
   const handleSelect = () => {
     if (!isToolbarVisible && setIsToolbarVisible) {
@@ -87,15 +88,44 @@ const Tool = ({
 
     if (!selectedTool) {
       setIsHovered(true);
-      setSelectedTool(description);
+      setSelectedTool(type);
       return;
     }
 
-    if (selectedTool !== description) {
-      setSelectedTool(description);
+    if (selectedTool !== type) {
+      setSelectedTool(type);
     } else {
-      setSelectedTool(null);
-      onClick({ appendMessage: append });
+      if (type === 'final-polish') {
+        append({
+          role: 'user',
+          content:
+            'Please add final polish and check for grammar, add section titles for better structure, and ensure everything reads smoothly.',
+        });
+
+        setSelectedTool(null);
+      } else if (type === 'request-suggestions') {
+        append({
+          role: 'user',
+          content:
+            'Please add suggestions you have that could improve the writing.',
+        });
+
+        setSelectedTool(null);
+      } else if (type === 'add-comments') {
+        append({
+          role: 'user',
+          content: 'Please add comments to explain the code.',
+        });
+
+        setSelectedTool(null);
+      } else if (type === 'add-logs') {
+        append({
+          role: 'user',
+          content: 'Please add logs to help debug the code.',
+        });
+
+        setSelectedTool(null);
+      }
     }
   };
 
@@ -104,13 +134,13 @@ const Tool = ({
       <TooltipTrigger asChild>
         <motion.div
           className={cx('p-3 rounded-full', {
-            'bg-primary !text-primary-foreground': selectedTool === description,
+            'bg-primary !text-primary-foreground': selectedTool === type,
           })}
           onHoverStart={() => {
             setIsHovered(true);
           }}
           onHoverEnd={() => {
-            if (selectedTool !== description) setIsHovered(false);
+            if (selectedTool !== type) setIsHovered(false);
           }}
           onKeyDown={(event) => {
             if (event.key === 'Enter') {
@@ -130,7 +160,7 @@ const Tool = ({
             handleSelect();
           }}
         >
-          {selectedTool === description ? <ArrowUpIcon /> : icon}
+          {selectedTool === type ? <ArrowUpIcon /> : icon}
         </motion.div>
       </TooltipTrigger>
       <TooltipContent
@@ -255,6 +285,63 @@ const ReadingLevelSelector = ({
   );
 };
 
+const toolsByBlockKind: Record<
+  BlockKind,
+  Array<{
+    type:
+      | 'final-polish'
+      | 'request-suggestions'
+      | 'adjust-reading-level'
+      | 'code-review'
+      | 'add-comments'
+      | 'add-logs';
+    description: string;
+    icon: JSX.Element;
+  }>
+> = {
+  text: [
+    {
+      type: 'final-polish',
+      description: 'Add final polish',
+      icon: <PenIcon />,
+    },
+    {
+      type: 'adjust-reading-level',
+      description: 'Adjust reading level',
+      icon: <SummarizeIcon />,
+    },
+    {
+      type: 'request-suggestions',
+      description: 'Request suggestions',
+      icon: <MessageIcon />,
+    },
+  ],
+  code: [
+    {
+      type: 'add-comments',
+      description: 'Add comments',
+      icon: <CodeIcon />,
+    },
+    {
+      type: 'add-logs',
+      description: 'Add logs',
+      icon: <LogsIcon />,
+    },
+  ],
+  spreadsheet: [
+    {
+      type: 'final-polish',
+      description: 'Format and clean data',
+      icon: <SparklesIcon />,
+    },
+    {
+      type: 'request-suggestions',
+      description: 'Analyze and visualize data',
+      icon: <MessageIcon />,
+    },
+  ],
+};
+
 export const Tools = ({
   isToolbarVisible,
   selectedTool,
@@ -262,7 +349,7 @@ export const Tools = ({
   append,
   isAnimating,
   setIsToolbarVisible,
-  tools,
+  blockKind,
 }: {
   isToolbarVisible: boolean;
   selectedTool: string | null;
@@ -273,9 +360,9 @@ export const Tools = ({
   ) => Promise<string | null | undefined>;
   isAnimating: boolean;
   setIsToolbarVisible: Dispatch<SetStateAction<boolean>>;
-  tools: Array<BlockToolbarItem>;
+  blockKind: BlockKind;
 }) => {
-  const [primaryTool, ...secondaryTools] = tools;
+  const [primaryTool, ...secondaryTools] = toolsByBlockKind[blockKind];
 
   return (
     <motion.div
@@ -288,19 +375,20 @@ export const Tools = ({
         {isToolbarVisible &&
           secondaryTools.map((secondaryTool) => (
             <Tool
-              key={secondaryTool.description}
+              key={secondaryTool.type}
+              type={secondaryTool.type}
               description={secondaryTool.description}
               icon={secondaryTool.icon}
               selectedTool={selectedTool}
               setSelectedTool={setSelectedTool}
               append={append}
               isAnimating={isAnimating}
-              onClick={secondaryTool.onClick}
             />
           ))}
       </AnimatePresence>
 
       <Tool
+        type={primaryTool.type}
         description={primaryTool.description}
         icon={primaryTool.icon}
         selectedTool={selectedTool}
@@ -309,7 +397,6 @@ export const Tools = ({
         setIsToolbarVisible={setIsToolbarVisible}
         append={append}
         isAnimating={isAnimating}
-        onClick={primaryTool.onClick}
       />
     </motion.div>
   );
@@ -377,20 +464,6 @@ const PureToolbar = ({
     }
   }, [isLoading, setIsToolbarVisible]);
 
-  const blockDefinition = blockDefinitions.find(
-    (definition) => definition.kind === blockKind,
-  );
-
-  if (!blockDefinition) {
-    throw new Error('Block definition not found!');
-  }
-
-  const toolsByBlockKind = blockDefinition.toolbar;
-
-  if (toolsByBlockKind.length === 0) {
-    return null;
-  }
-
   return (
     <TooltipProvider delayDuration={0}>
       <motion.div
@@ -409,7 +482,7 @@ const PureToolbar = ({
               : {
                   opacity: 1,
                   y: 0,
-                  height: toolsByBlockKind.length * 50,
+                  height: toolsByBlockKind[blockKind].length * 50,
                   transition: { delay: 0 },
                   scale: 1,
                 }
@@ -466,7 +539,7 @@ const PureToolbar = ({
             selectedTool={selectedTool}
             setIsToolbarVisible={setIsToolbarVisible}
             setSelectedTool={setSelectedTool}
-            tools={toolsByBlockKind}
+            blockKind={blockKind}
           />
         )}
       </motion.div>

@@ -2,13 +2,15 @@ import type { Metadata } from 'next';
 import { Toaster } from 'sonner';
 
 import { ThemeProvider } from '@/components/theme-provider';
+import { Analytics } from '@vercel/analytics/react';
 
 import './globals.css';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://chat.vercel.ai'),
-  title: 'Next.js Chatbot Template',
-  description: 'Next.js chatbot template using the AI SDK.',
+  metadataBase: new URL('https://extract.chat'),
+  title: 'Extract Chat - by Firecrawl',
+  description:
+    'Extract Chat allows you to extract information from any website with the help of an AI chatbot.',
 };
 
 export const viewport = {
@@ -59,13 +61,14 @@ export default async function RootLayout({
       <body className="antialiased">
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >
           <Toaster position="top-center" />
           {children}
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
