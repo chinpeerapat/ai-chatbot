@@ -57,6 +57,7 @@ const allTools: AllowedTools[] = [...firecrawlTools];
 
 const app = new FirecrawlApp({
   apiKey: process.env.FIRECRAWL_API_KEY || '',
+  baseUrl: process.env.FIRECRAWL_URL || 'https://api.firecrawl.dev'
 });
 
 export async function POST(request: Request) {
