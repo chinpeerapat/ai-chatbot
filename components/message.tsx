@@ -4,15 +4,16 @@ import type { ChatRequestOptions, Message } from 'ai';
 import cx from 'classnames';
 import { AnimatePresence, motion } from 'framer-motion';
 import { memo, useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 import type { Vote } from '@/lib/db/schema';
-
-import { DocumentToolCall, DocumentToolResult } from './document';
+import { DocumentToolCall, DocumentToolResult } from '@/components/document';
 import {
   ChevronDownIcon,
   LoaderIcon,
   PencilEditIcon,
   SparklesIcon,
+  ShareIcon,
 } from './icons';
 import { Markdown } from './markdown';
 import { MessageActions } from './message-actions';
@@ -48,6 +49,7 @@ const PurePreviewMessage = ({
   isReadonly: boolean;
 }) => {
   const [mode, setMode] = useState<'view' | 'edit'>('view');
+  const t = useTranslations();
 
   return (
     <AnimatePresence>
@@ -108,7 +110,7 @@ const PurePreviewMessage = ({
                         <PencilEditIcon />
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent>Edit message</TooltipContent>
+                    <TooltipContent>{t('common.edit')}</TooltipContent>
                   </Tooltip>
                 )}
 
@@ -240,6 +242,7 @@ export const PreviewMessage = memo(
 
 export const ThinkingMessage = () => {
   const role = 'assistant';
+  const t = useTranslations('chat.messages');
 
   return (
     <motion.div
@@ -262,7 +265,7 @@ export const ThinkingMessage = () => {
 
         <div className="flex flex-col gap-2 w-full">
           <div className="flex flex-col gap-4 text-muted-foreground">
-            Thinking...
+            {t('thinking')}
           </div>
         </div>
       </div>

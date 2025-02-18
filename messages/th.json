@@ -1,0 +1,115 @@
+{
+  "app": {
+    "title": "เทมเพลตแชทบอท Next.js",
+    "description": "เทมเพลตแชทบอท Next.js ที่ใช้ AI SDK"
+  },
+  "overview": {
+    "title": "แชทบอท AI โอเพนซอร์ส",
+    "description": "นี่คือ{openSourceLink}แชทบอทที่สร้างด้วย Next.js และ AI SDK โดย Vercel มันใช้ฟังก์ชัน {streamText} ในเซิร์ฟเวอร์และฮุค {useChatHook} ในไคลเอนต์เพื่อสร้างประสบการณ์การแชทที่ราบรื่น",
+    "openSourceLink": "โอเพนซอร์ส",
+    "learnMore": "คุณสามารถเรียนรู้เพิ่มเติมเกี่ยวกับ AI SDK ได้โดยเข้าไปที่{docsLink}",
+    "docsLink": "เอกสาร",
+    "links": {
+      "github": "https://github.com/vercel/ai-chatbot",
+      "docs": "https://sdk.vercel.ai/docs"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "เข้าสู่ระบบ",
+      "emailLabel": "อีเมล",
+      "passwordLabel": "รหัสผ่าน",
+      "submitButton": "เข้าสู่ระบบ",
+      "errors": {
+        "invalidCredentials": "อีเมลหรือรหัสผ่านไม่ถูกต้อง",
+        "failed": "การยืนยันตัวตนล้มเหลว"
+      }
+    },
+    "register": {
+      "title": "สร้างบัญชี",
+      "submitButton": "สร้างบัญชี"
+    }
+  },
+  "chat": {
+    "header": {
+      "newChat": "แชทใหม่",
+      "deployButton": "ติดตั้งบน Vercel"
+    },
+    "input": {
+      "placeholder": "พิมพ์ข้อความ...",
+      "send": "ส่ง",
+      "stop": "หยุดการสร้าง"
+    },
+    "messages": {
+      "thinking": "กำลังคิด...",
+      "error": "เกิดข้อผิดพลาด โปรดลองอีกครั้ง!"
+    }
+  },
+  "sidebar": {
+    "title": "แชทบอท",
+    "newChat": "แชทใหม่",
+    "timeGroups": {
+      "today": "วันนี้",
+      "yesterday": "เมื่อวาน",
+      "lastWeek": "7 วันที่ผ่านมา",
+      "lastMonth": "30 วันที่ผ่านมา",
+      "older": "เก่ากว่านั้น"
+    },
+    "emptyState": {
+      "loggedOut": "เข้าสู่ระบบเพื่อบันทึกและดูแชทก่อนหน้า!",
+      "noChats": "การสนทนาของคุณจะปรากฏที่นี่เมื่อคุณเริ่มแชท!"
+    }
+  },
+  "userNav": {
+    "theme": {
+      "toggle": "เปลี่ยนเป็นโหมด{mode}",
+      "light": "สว่าง",
+      "dark": "มืด"
+    },
+    "signOut": "ออกจากระบบ"
+  },
+  "visibility": {
+    "private": {
+      "label": "ส่วนตัว",
+      "description": "เฉพาะคุณเท่านั้นที่สามารถเข้าถึงแชทนี้"
+    },
+    "public": {
+      "label": "สาธารณะ",
+      "description": "ทุกคนที่มีลิงก์สามารถเข้าถึงแชทนี้"
+    }
+  },
+  "messageActions": {
+    "copy": "คัดลอก",
+    "copied": "คัดลอกไปยังคลิปบอร์ดแล้ว!",
+    "upvote": "โหวตเพิ่ม",
+    "downvote": "โหวตลด",
+    "upvoting": "กำลังโหวตเพิ่ม...",
+    "upvoted": "โหวตเพิ่มแล้ว!",
+    "downvoting": "กำลังโหวตลด...",
+    "downvoted": "โหวตลดแล้ว!",
+    "error": "ไม่สามารถ{action}การตอบกลับได้"
+  },
+  "weather": {
+    "high": "สูง:{temp}°",
+    "low": "ต่ำ:{temp}°"
+  },
+  "common": {
+    "loading": "กำลังโหลด...",
+    "error": "เกิดข้อผิดพลาด",
+    "retry": "ลองใหม่",
+    "cancel": "ยกเลิก",
+    "save": "บันทึก",
+    "delete": "ลบ",
+    "edit": "แก้ไข",
+    "close": "ปิด",
+    "share": "แชร์",
+    "continue": "ดำเนินการต่อ",
+    "areYouSure": "คุณแน่ใจหรือไม่?",
+    "deleteConfirmation": "การกระทำนี้ไม่สามารถย้อนกลับได้ การดำเนินการนี้จะลบแชทของคุณอย่างถาวรและนำออกจากเซิร์ฟเวอร์ของเรา",
+    "deleted": "ลบแล้ว",
+    "language": {
+      "en": "English",
+      "th": "ไทย"
+    }
+  }
+}

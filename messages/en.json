@@ -1,0 +1,110 @@
+{
+  "app": {
+    "title": "Next.js Chatbot Template",
+    "description": "Next.js chatbot template using the AI SDK."
+  },
+  "overview": {
+    "title": "Open Source AI Chatbot",
+    "description": "This is an {openSourceLink} chatbot template built with Next.js and the AI SDK by Vercel. It uses the {streamText} function in the server and the {useChatHook} hook on the client to create a seamless chat experience.",
+    "openSourceLink": "open source",
+    "learnMore": "You can learn more about the AI SDK by visiting the {docsLink}.",
+    "docsLink": "docs",
+    "links": {
+      "github": "https://github.com/vercel/ai-chatbot",
+      "docs": "https://sdk.vercel.ai/docs"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Sign In",
+      "emailLabel": "Email Address",
+      "passwordLabel": "Password",
+      "submitButton": "Sign In",
+      "errors": {
+        "invalidCredentials": "Invalid email or password",
+        "failed": "Authentication failed"
+      }
+    },
+    "register": {
+      "title": "Create Account",
+      "submitButton": "Create Account"
+    }
+  },
+  "chat": {
+    "header": {
+      "newChat": "New Chat",
+      "deployButton": "Deploy with Vercel"
+    },
+    "input": {
+      "placeholder": "Type a message...",
+      "send": "Send",
+      "stop": "Stop generating"
+    },
+    "messages": {
+      "thinking": "Thinking...",
+      "error": "An error occurred, please try again!"
+    }
+  },
+  "sidebar": {
+    "title": "Chatbot",
+    "newChat": "New Chat",
+    "timeGroups": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "lastWeek": "Last 7 days",
+      "lastMonth": "Last 30 days",
+      "older": "Older"
+    },
+    "emptyState": {
+      "loggedOut": "Login to save and revisit previous chats!",
+      "noChats": "Your conversations will appear here once you start chatting!"
+    }
+  },
+  "userNav": {
+    "theme": {
+      "toggle": "Toggle {mode} mode",
+      "light": "light",
+      "dark": "dark"
+    },
+    "signOut": "Sign out"
+  },
+  "visibility": {
+    "private": {
+      "label": "Private",
+      "description": "Only you can access this chat"
+    },
+    "public": {
+      "label": "Public", 
+      "description": "Anyone with the link can access this chat"
+    }
+  },
+  "messageActions": {
+    "copy": "Copy",
+    "copied": "Copied to clipboard!",
+    "upvote": "Upvote Response",
+    "downvote": "Downvote Response",
+    "upvoting": "Upvoting Response...",
+    "upvoted": "Upvoted Response!",
+    "downvoting": "Downvoting Response...",
+    "downvoted": "Downvoted Response!",
+    "error": "Failed to {action} response"
+  },
+  "weather": {
+    "high": "H:{temp}°",
+    "low": "L:{temp}°"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "language": {
+      "en": "English",
+      "th": "ไทย"
+    }
+  }
+}

@@ -9,8 +9,9 @@ const config: Config = {
   ],
   theme: {
     fontFamily: {
-      sans: ['geist'],
+      sans: ['geist', 'IBM Plex Sans Thai'],
       mono: ['geist-mono'],
+      thai: ['IBM Plex Sans Thai', 'geist'],
     },
     extend: {
       borderRadius: {

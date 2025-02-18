@@ -4,6 +4,7 @@ import Image from 'next/image';
 import type { User } from 'next-auth';
 import { signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
+import { useTranslations } from 'next-intl';
 
 import {
   DropdownMenu,
@@ -20,6 +21,7 @@ import {
 
 export function SidebarUserNav({ user }: { user: User }) {
   const { setTheme, theme } = useTheme();
+  const t = useTranslations('userNav');
 
   return (
     <SidebarMenu>
@@ -46,7 +48,9 @@ export function SidebarUserNav({ user }: { user: User }) {
               className="cursor-pointer"
               onSelect={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             >
-              {`Toggle ${theme === 'light' ? 'dark' : 'light'} mode`}
+              {t.rich('theme.toggle', {
+                mode: theme === 'light' ? t('theme.dark') : t('theme.light'),
+              })}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
@@ -59,7 +63,7 @@ export function SidebarUserNav({ user }: { user: User }) {
                   });
                 }}
               >
-                Sign out
+                {t('signOut')}
               </button>
             </DropdownMenuItem>
           </DropdownMenuContent>

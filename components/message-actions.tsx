@@ -2,6 +2,7 @@ import type { Message } from 'ai';
 import { toast } from 'sonner';
 import { useSWRConfig } from 'swr';
 import { useCopyToClipboard } from 'usehooks-ts';
+import { useTranslations } from 'next-intl';
 
 import type { Vote } from '@/lib/db/schema';
 
@@ -29,6 +30,7 @@ export function PureMessageActions({
 }) {
   const { mutate } = useSWRConfig();
   const [_, copyToClipboard] = useCopyToClipboard();
+  const t = useTranslations('messageActions');
 
   if (isLoading) return null;
   if (message.role === 'user') return null;
@@ -45,13 +47,13 @@ export function PureMessageActions({
               variant="outline"
               onClick={async () => {
                 await copyToClipboard(message.content as string);
-                toast.success('Copied to clipboard!');
+                toast.success(t('copied'));
               }}
             >
               <CopyIcon />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>Copy</TooltipContent>
+          <TooltipContent>{t('copy')}</TooltipContent>
         </Tooltip>
 
         <Tooltip>
@@ -71,7 +73,7 @@ export function PureMessageActions({
                 });
 
                 toast.promise(upvote, {
-                  loading: 'Upvoting Response...',
+                  loading: t('upvoting'),
                   success: () => {
                     mutate<Array<Vote>>(
                       `/api/vote?chatId=${chatId}`,
@@ -94,16 +96,16 @@ export function PureMessageActions({
                       { revalidate: false },
                     );
 
-                    return 'Upvoted Response!';
+                    return t('upvoted');
                   },
-                  error: 'Failed to upvote response.',
+                  error: t.rich('error', { action: 'upvote' }),
                 });
               }}
             >
               <ThumbUpIcon />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>Upvote Response</TooltipContent>
+          <TooltipContent>{t('upvote')}</TooltipContent>
         </Tooltip>
 
         <Tooltip>
@@ -123,7 +125,7 @@ export function PureMessageActions({
                 });
 
                 toast.promise(downvote, {
-                  loading: 'Downvoting Response...',
+                  loading: t('downvoting'),
                   success: () => {
                     mutate<Array<Vote>>(
                       `/api/vote?chatId=${chatId}`,
@@ -146,16 +148,16 @@ export function PureMessageActions({
                       { revalidate: false },
                     );
 
-                    return 'Downvoted Response!';
+                    return t('downvoted');
                   },
-                  error: 'Failed to downvote response.',
+                  error: t.rich('error', { action: 'downvote' }),
                 });
               }}
             >
               <ThumbDownIcon />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>Downvote Response</TooltipContent>
+          <TooltipContent>{t('downvote')}</TooltipContent>
         </Tooltip>
       </div>
     </TooltipProvider>
