@@ -10,9 +10,10 @@ import {
   RedoIcon,
   UndoIcon,
 } from '@/components/icons';
-import { Suggestion } from '@/lib/db/schema';
+import type { Suggestion } from '@/lib/db/schema';
 import { toast } from 'sonner';
 import { getSuggestions } from '../actions';
+import { useTranslations } from 'next-intl';
 
 interface TextArtifactMetadata {
   suggestions: Array<Suggestion>;
@@ -90,8 +91,7 @@ export const textArtifact = new Artifact<'text', TextArtifactMetadata>({
             onSaveContent={onSaveContent}
           />
 
-          {metadata &&
-          metadata.suggestions &&
+          {metadata?.suggestions &&
           metadata.suggestions.length > 0 ? (
             <div className="md:hidden h-dvh w-12 shrink-0" />
           ) : null}
@@ -102,21 +102,20 @@ export const textArtifact = new Artifact<'text', TextArtifactMetadata>({
   actions: [
     {
       icon: <ClockRewind size={18} />,
-      description: 'View changes',
+      description: 'textArtifact.actions.viewChanges',
       onClick: ({ handleVersionChange }) => {
         handleVersionChange('toggle');
       },
-      isDisabled: ({ currentVersionIndex, setMetadata }) => {
+      isDisabled: ({ currentVersionIndex }) => {
         if (currentVersionIndex === 0) {
           return true;
         }
-
         return false;
       },
     },
     {
       icon: <UndoIcon size={18} />,
-      description: 'View Previous version',
+      description: 'textArtifact.actions.viewPrevious',
       onClick: ({ handleVersionChange }) => {
         handleVersionChange('prev');
       },
@@ -124,13 +123,12 @@ export const textArtifact = new Artifact<'text', TextArtifactMetadata>({
         if (currentVersionIndex === 0) {
           return true;
         }
-
         return false;
       },
     },
     {
       icon: <RedoIcon size={18} />,
-      description: 'View Next version',
+      description: 'textArtifact.actions.viewNext',
       onClick: ({ handleVersionChange }) => {
         handleVersionChange('next');
       },
@@ -138,39 +136,39 @@ export const textArtifact = new Artifact<'text', TextArtifactMetadata>({
         if (isCurrentVersion) {
           return true;
         }
-
         return false;
       },
     },
     {
       icon: <CopyIcon size={18} />,
-      description: 'Copy to clipboard',
+      description: 'textArtifact.actions.copyToClipboard',
       onClick: ({ content }) => {
+        const t = useTranslations('textArtifact');
         navigator.clipboard.writeText(content);
-        toast.success('Copied to clipboard!');
+        toast.success(t('actions.copied'));
       },
     },
   ],
   toolbar: [
     {
       icon: <PenIcon />,
-      description: 'Add final polish',
+      description: 'textArtifact.toolbar.polish',
       onClick: ({ appendMessage }) => {
+        const t = useTranslations('textArtifact');
         appendMessage({
           role: 'user',
-          content:
-            'Please add final polish and check for grammar, add section titles for better structure, and ensure everything reads smoothly.',
+          content: t('toolbar.polishMessage'),
         });
       },
     },
     {
       icon: <MessageIcon />,
-      description: 'Request suggestions',
+      description: 'textArtifact.toolbar.suggestions',
       onClick: ({ appendMessage }) => {
+        const t = useTranslations('textArtifact');
         appendMessage({
           role: 'user',
-          content:
-            'Please add suggestions you have that could improve the writing.',
+          content: t('toolbar.suggestionsMessage'),
         });
       },
     },

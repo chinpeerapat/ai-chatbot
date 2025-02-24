@@ -38,7 +38,11 @@
     "input": {
       "placeholder": "Type a message...",
       "send": "Send",
-      "stop": "Stop generating"
+      "stop": "Stop generating",
+      "upload": {
+        "error": "Failed to upload file, please try again!",
+        "wait": "Please wait for the model to finish its response!"
+      }
     },
     "messages": {
       "thinking": "Thinking...",
@@ -48,6 +52,7 @@
   "sidebar": {
     "title": "Chatbot",
     "newChat": "New Chat",
+    "toggle": "Toggle Sidebar",
     "timeGroups": {
       "today": "Today",
       "yesterday": "Yesterday",
@@ -102,9 +107,127 @@
     "delete": "Delete",
     "edit": "Edit",
     "close": "Close",
+    "submit": "Submit form",
     "language": {
       "en": "English",
-      "th": "ไทย"
+      "th": "ไทย",
+      "switch": "Switch language"
+    }
+  },
+  "models": {
+    "chat": {
+      "small": {
+        "name": "Small model",
+        "description": "Small model for fast, lightweight tasks"
+      },
+      "large": {
+        "name": "Large model",
+        "description": "Large model for complex, multi-step tasks"
+      },
+      "reasoning": {
+        "name": "Reasoning model",
+        "description": "Uses advanced reasoning"
+      }
+    }
+  },
+  "prompts": {
+    "regular": "You are a friendly assistant! Keep your responses concise and helpful.",
+    "artifacts": {
+      "error": {
+        "definitionNotFound": "Artifact definition not found!"
+      },
+      "actions": {
+        "executeFailed": "Failed to execute action"
+      }
+    },
+    "code": {
+      "title": "Python Code Generator",
+      "description": "You are a Python code generator that creates self-contained, executable code snippets. When writing code:",
+      "rules": {
+        "complete": "Each snippet should be complete and runnable on its own",
+        "print": "Prefer using print() statements to display outputs",
+        "comments": "Include helpful comments explaining the code",
+        "concise": "Keep snippets concise (generally under 15 lines)",
+        "stdlib": "Avoid external dependencies - use Python standard library",
+        "errors": "Handle potential errors gracefully",
+        "output": "Return meaningful output that demonstrates the code's functionality",
+        "noInput": "Don't use input() or other interactive functions",
+        "noIO": "Don't access files or network resources",
+        "noInfinite": "Don't use infinite loops"
+      }
+    },
+    "sheet": {
+      "description": "You are a spreadsheet creation assistant. Create a spreadsheet in csv format based on the given prompt. The spreadsheet should contain meaningful column headers and data."
+    },
+    "update": {
+      "text": "Improve the following contents of the document based on the given prompt.",
+      "code": "Improve the following code snippet based on the given prompt.",
+      "sheet": "Improve the following spreadsheet based on the given prompt."
+    }
+  },
+  "console": {
+    "status": {
+      "initializing": "Initializing...",
+      "loadingPackages": "Loading packages...",
+      "completed": "Completed",
+      "failed": "Failed"
+    },
+    "clear": "Clear console"
+  },
+  "reasoning": {
+    "title": "Reasoning",
+    "reasonedTime": "Reasoned for a few seconds"
+  },
+  "textArtifact": {
+    "actions": {
+      "viewChanges": "View changes",
+      "viewPrevious": "View Previous version",
+      "viewNext": "View Next version",
+      "copyToClipboard": "Copy to clipboard",
+      "copied": "Copied to clipboard!"
+    },
+    "toolbar": {
+      "polish": "Add final polish",
+      "polishMessage": "Please add final polish and check for grammar, add section titles for better structure, and ensure everything reads smoothly.",
+      "suggestions": "Request suggestions",
+      "suggestionsMessage": "Please add suggestions you have that could improve the writing."
+    }
+  },
+  "document": {
+    "preview": {
+      "loading": "Loading document...",
+      "error": "Failed to load document",
+      "notFound": "Document not found"
+    },
+    "actions": {
+      "creating": "Creating",
+      "created": "Created",
+      "updating": "Updating",
+      "updated": "Updated",
+      "addingSuggestions": "Adding suggestions",
+      "addedSuggestions": "Added suggestions to"
+    }
+  },
+  "suggestedActions": {
+    "nextjs": {
+      "title": "What are the advantages",
+      "label": "of using Next.js?",
+      "action": "What are the advantages of using Next.js?"
+    },
+    "dijkstra": {
+      "title": "Write code to",
+      "label": "demonstrate djikstra's algorithm",
+      "action": "Write code to demonstrate djikstra's algorithm"
+    },
+    "essay": {
+      "title": "Help me write an essay",
+      "label": "about silicon valley",
+      "action": "Help me write an essay about silicon valley"
+    },
+    "weather": {
+      "title": "What is the weather",
+      "label": "in San Francisco?",
+      "action": "What is the weather in San Francisco?"
     }
   }
 }

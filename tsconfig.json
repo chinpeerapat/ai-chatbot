@@ -28,6 +28,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "next.config.js"
-  ],
+, "i18n/analysis.js"  ],
   "exclude": ["node_modules"]
 }

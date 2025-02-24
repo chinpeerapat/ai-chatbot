@@ -1,27 +1,10 @@
 import { memo } from 'react';
+import { useTranslations } from 'next-intl';
 
 import type { ArtifactKind } from './artifact';
 import { FileIcon, LoaderIcon, MessageIcon, PencilEditIcon } from './icons';
 import { toast } from 'sonner';
 import { useArtifact } from '@/hooks/use-artifact';
-
-const getActionText = (
-  type: 'create' | 'update' | 'request-suggestions',
-  tense: 'present' | 'past',
-) => {
-  switch (type) {
-    case 'create':
-      return tense === 'present' ? 'Creating' : 'Created';
-    case 'update':
-      return tense === 'present' ? 'Updating' : 'Updated';
-    case 'request-suggestions':
-      return tense === 'present'
-        ? 'Adding suggestions'
-        : 'Added suggestions to';
-    default:
-      return null;
-  }
-};
 
 interface DocumentToolResultProps {
   type: 'create' | 'update' | 'request-suggestions';
@@ -35,6 +18,32 @@ function PureDocumentToolResult({
   isReadonly,
 }: DocumentToolResultProps) {
   const { setArtifact } = useArtifact();
+  const t = useTranslations('document.actions');
+
+  // Pre-compute translations at render time
+  const translations = {
+    creating: t('creating'),
+    created: t('created'),
+    updating: t('updating'),
+    updated: t('updated'),
+    addingSuggestions: t('addingSuggestions'),
+    addedSuggestions: t('addedSuggestions'),
+  };
+
+  const getActionText = (type: 'create' | 'update' | 'request-suggestions', tense: 'present' | 'past') => {
+    switch (type) {
+      case 'create':
+        return tense === 'present' ? translations.creating : translations.created;
+      case 'update':
+        return tense === 'present' ? translations.updating : translations.updated;
+      case 'request-suggestions':
+        return tense === 'present'
+          ? translations.addingSuggestions
+          : translations.addedSuggestions;
+      default:
+        return null;
+    }
+  };
 
   return (
     <button
@@ -98,6 +107,32 @@ function PureDocumentToolCall({
   isReadonly,
 }: DocumentToolCallProps) {
   const { setArtifact } = useArtifact();
+  const t = useTranslations('document.actions');
+
+  // Pre-compute translations at render time
+  const translations = {
+    creating: t('creating'),
+    created: t('created'),
+    updating: t('updating'),
+    updated: t('updated'),
+    addingSuggestions: t('addingSuggestions'),
+    addedSuggestions: t('addedSuggestions'),
+  };
+
+  const getActionText = (type: 'create' | 'update' | 'request-suggestions', tense: 'present' | 'past') => {
+    switch (type) {
+      case 'create':
+        return tense === 'present' ? translations.creating : translations.created;
+      case 'update':
+        return tense === 'present' ? translations.updating : translations.updated;
+      case 'request-suggestions':
+        return tense === 'present'
+          ? translations.addingSuggestions
+          : translations.addedSuggestions;
+      default:
+        return null;
+    }
+  };
 
   return (
     <button

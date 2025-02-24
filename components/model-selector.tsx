@@ -1,8 +1,9 @@
 'use client';
 
 import { startTransition, useMemo, useOptimistic, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
-import { saveChatModelAsCookie } from '@/app/(chat)/actions';
+import { saveChatModelAsCookie } from '@/app/[locale]/(chat)/action';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -24,29 +25,40 @@ export function ModelSelector({
   const [open, setOpen] = useState(false);
   const [optimisticModelId, setOptimisticModelId] =
     useOptimistic(selectedModelId);
+  const t = useTranslations('models.chat');
 
   const selectedChatModel = useMemo(
     () => chatModels.find((chatModel) => chatModel.id === optimisticModelId),
-    [optimisticModelId],
+    [optimisticModelId]
   );
+
+  // Map model IDs to their translation keys
+  const getModelTranslation = (modelId: string) => {
+    const modelKey = modelId.replace('chat-model-', '');
+    return {
+      name: t(`${modelKey}.name`),
+      description: t(`${modelKey}.description`)
+    };
+  };
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger
         asChild
         className={cn(
-          'w-fit data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
-          className,
+          "w-fit data-[state=open]:bg-accent data-[state=open]:text-accent-foreground",
+          className
         )}
       >
         <Button variant="outline" className="md:px-2 md:h-[34px]">
-          {selectedChatModel?.name}
+          {selectedChatModel && getModelTranslation(selectedChatModel.id).name}
           <ChevronDownIcon />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="min-w-[300px]">
         {chatModels.map((chatModel) => {
           const { id } = chatModel;
+          const translation = getModelTranslation(id);
 
           return (
             <DropdownMenuItem
@@ -63,9 +75,9 @@ export function ModelSelector({
               data-active={id === optimisticModelId}
             >
               <div className="flex flex-col gap-1 items-start">
-                <div>{chatModel.name}</div>
+                <div>{translation.name}</div>
                 <div className="text-xs text-muted-foreground">
-                  {chatModel.description}
+                  {translation.description}
                 </div>
               </div>
 

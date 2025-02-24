@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { ChatRequestOptions, CreateMessage, Message } from 'ai';
 import { memo } from 'react';
+import { useTranslations } from 'next-intl';
 
 interface SuggestedActionsProps {
   chatId: string;
@@ -14,26 +15,32 @@ interface SuggestedActionsProps {
 }
 
 function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
+  const t = useTranslations('suggestedActions');
+
   const suggestedActions = [
     {
-      title: 'What are the advantages',
-      label: 'of using Next.js?',
-      action: 'What are the advantages of using Next.js?',
+      key: 'nextjs',
+      title: t('nextjs.title'),
+      label: t('nextjs.label'),
+      action: t('nextjs.action'),
     },
     {
-      title: 'Write code to',
-      label: `demonstrate djikstra's algorithm`,
-      action: `Write code to demonstrate djikstra's algorithm`,
+      key: 'dijkstra',
+      title: t('dijkstra.title'),
+      label: t('dijkstra.label'),
+      action: t('dijkstra.action'),
     },
     {
-      title: 'Help me write an essay',
-      label: `about silicon valley`,
-      action: `Help me write an essay about silicon valley`,
+      key: 'essay',
+      title: t('essay.title'),
+      label: t('essay.label'),
+      action: t('essay.action'),
     },
     {
-      title: 'What is the weather',
-      label: 'in San Francisco?',
-      action: 'What is the weather in San Francisco?',
+      key: 'weather',
+      title: t('weather.title'),
+      label: t('weather.label'),
+      action: t('weather.action'),
     },
   ];
 
@@ -45,7 +52,7 @@ function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ delay: 0.05 * index }}
-          key={`suggested-action-${suggestedAction.title}-${index}`}
+          key={`suggested-action-${suggestedAction.key}-${index}`}
           className={index > 1 ? 'hidden sm:block' : 'block'}
         >
           <Button

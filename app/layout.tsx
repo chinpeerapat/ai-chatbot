@@ -1,18 +1,15 @@
 import type { Metadata } from 'next';
-import { Toaster } from 'sonner';
-import { NextIntlClientProvider } from 'next-intl';
-import { getLocale, getMessages } from 'next-intl/server';
 import '@fontsource/ibm-plex-sans-thai/400.css';
 import '@fontsource/ibm-plex-sans-thai/500.css';
 import '@fontsource/ibm-plex-sans-thai/600.css';
-
-import { ThemeProvider } from '@/components/theme-provider';
-
 import './globals.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://chat.vercel.ai'),
-  title: 'Next.js Chatbot Template',
+  title: {
+    template: '%s | Next.js Chatbot Template',
+    default: 'Next.js Chatbot Template'
+  },
   description: 'Next.js chatbot template using the AI SDK.',
 };
 
@@ -40,23 +37,13 @@ const THEME_COLOR_SCRIPT = `\
   updateThemeColor();
 })();`;
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  const locale = await getLocale();
-  const messages = await getMessages();
-
+}) {
   return (
-    <html
-      lang={locale}
-      // `next-themes` injects an extra classname to the body element to avoid
-      // visual flicker before hydration. Hence the `suppressHydrationWarning`
-      // prop is necessary to avoid the React hydration mismatch warning.
-      // https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
-      suppressHydrationWarning
-    >
+    <html suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -65,18 +52,8 @@ export default async function RootLayout({
         />
       </head>
       <body className="antialiased font-thai">
-        <NextIntlClientProvider messages={messages} locale={locale}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <Toaster position="top-center" />
-            {children}
-          </ThemeProvider>
-        </NextIntlClientProvider>
+        {children}
       </body>
     </html>
   );
-}
+} 

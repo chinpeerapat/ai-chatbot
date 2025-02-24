@@ -35,12 +35,12 @@ export const Overview = () => {
             ),
             streamText: (chunks) => (
               <code className="rounded-md bg-muted px-1 py-0.5">
-                streamText
+                {chunks}
               </code>
             ),
             useChatHook: (chunks) => (
               <code className="rounded-md bg-muted px-1 py-0.5">
-                useChat
+                {chunks}
               </code>
             ),
           })}

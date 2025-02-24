@@ -36,3 +36,10 @@ yarn-error.log*
 .vercel
 .vscode
 .env*.local
+.env local
+docs/i18n-integration-plan.md
+docs/i18n-integration-plan.md
+
+i18n/analysis.js
+i18n/i18n-analyzer.ts
+.env.local

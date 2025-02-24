@@ -1,31 +1,32 @@
-# I18n Integration Plan for AI Chatbot (Minimal Structure Changes)
+# I18n Integration Plan for AI Chatbot (with i18n Routing)
 
 ## 1. Technology Selection
 
-We'll use `next-intl` for internationalization, with a simplified approach that:
-- Preserves existing route structure
-- Maintains current component hierarchy
-- Minimizes refactoring of existing code
-- Uses a simple request-based configuration without complex routing changes
+We'll use `next-intl` for internationalization, implementing a routing-based approach that:
+- Uses i18n routing with locale prefixes (e.g., /en/chat, /th/chat)
+- Maintains component hierarchy within locale-specific routes
+- Enables static rendering for better performance
+- Provides type-safe translations and routing
 
 ## 2. Directory Structure Changes
 
-Minimal changes to existing structure:
+Updated structure to support i18n routing:
 
 ```
 ├── messages/           # Translation files
 │   ├── en.json        # English (default)
 │   └── th.json        # Thai
-├── app/               # Existing structure preserved
-│   ├── (auth)/        # Existing auth route group
-│   ├── (chat)/        # Existing chat route group
-│   └── layout.tsx     # Updated with language provider
-├── src/
-│   └── i18n/
-│       └── request.ts # i18n configuration
-├── next.config.mjs    # Updated with next-intl plugin
-└── components/
-    └── language-switcher.tsx  # New language selector component
+├── app/               # Updated structure with locale routing
+│   ├── [locale]/      # Dynamic locale segment
+│   │   ├── (auth)/    # Auth route group
+│   │   ├── (chat)/    # Chat route group
+│   │   └── layout.tsx # Locale-specific layout
+│   └── layout.tsx     # Root layout
+├── i18n/              # i18n configuration
+│   ├── routing.ts     # i18n routing configuration
+│   └── request.ts     # i18n request configuration
+├── middleware.ts      # Updated with next-intl middleware
+└── next.config.mjs    # Updated with next-intl plugin
 ```
 
 ## 3. Implementation Steps
@@ -50,28 +51,87 @@ Minimal changes to existing structure:
    export default withNextIntl(nextConfig);
    ```
 
-3. Create i18n configuration:
+3. Create i18n routing configuration:
    ```typescript
-   // src/i18n/request.ts
-   import { getRequestConfig } from 'next-intl/server';
+   // i18n/routing.ts
+   import {defineRouting} from 'next-intl/routing';
+   import {createNavigation} from 'next-intl/navigation';
    
-   export default getRequestConfig(async () => {
-     // This can be enhanced later to get locale from user settings or cookies
-     const locale = 'en';
+   export const routing = defineRouting({
+     locales: ['en', 'th'],
+     defaultLocale: 'en'
+   });
+   
+   export const {
+     Link, 
+     redirect,
+     usePathname,
+     useRouter,
+     getPathname
+   } = createNavigation(routing);
+   ```
+
+4. Set up middleware for locale handling while preserving NextAuth config:
+   ```typescript
+   // middleware.ts
+   import NextAuth from 'next-auth';
+   import { authConfig } from '@/app/(auth)/auth.config';
+   import createMiddleware from 'next-intl/middleware';
+   import {routing} from './src/i18n/routing';
+   
+   // Create both middleware handlers
+   const authMiddleware = NextAuth(authConfig).auth;
+   const intlMiddleware = createMiddleware(routing);
+   
+   // Combine the middleware handlers
+   export default async function middleware(request) {
+     // First handle i18n
+     const intlResult = await intlMiddleware(request);
+     
+     // Then handle auth, passing through the i18n result
+     return (await authMiddleware(request)) || intlResult;
+   }
+   
+   export const config = {
+     // Combine matchers from both middleware
+     matcher: [
+       // i18n routes
+       '/',
+       '/(en|th)/:path*',
+       // auth routes
+       '/:id',
+       '/api/:path*',
+       '/login',
+       '/register'
+     ]
+   };
+   ```
+
+5. Create i18n request configuration:
+   ```typescript
+   // i18n/request.ts
+   import {getRequestConfig} from 'next-intl/server';
+   import {routing} from './routing';
+   
+   export default getRequestConfig(async ({requestLocale}) => {
+     let locale = await requestLocale;
+   
+     if (!locale || !routing.locales.includes(locale as any)) {
+       locale = routing.defaultLocale;
+     }
    
      return {
        locale,
-       messages: (await import(`../../messages/${locale}.json`)).default
+       messages: (await import(`../messages/${locale}.json`)).default
      };
    });
    ```
 
 ### Phase 2: Message Structure (1-2 days)
 
-Create a comprehensive message structure covering all UI components:
+Create comprehensive message structure (messages/en.json and messages/th.json) covering all UI components:
 
 ```json
-// messages/en.json
 {
   "app": {
     "title": "Next.js Chatbot Template",
@@ -163,10 +223,6 @@ Create a comprehensive message structure covering all UI components:
     "downvoted": "Downvoted Response!",
     "error": "Failed to {action} response"
   },
-  "weather": {
-    "high": "H:{temp}°",
-    "low": "L:{temp}°"
-  },
   "common": {
     "loading": "Loading...",
     "error": "An error occurred",
@@ -186,27 +242,36 @@ Create a comprehensive message structure covering all UI components:
 
 ### Phase 3: Component Updates (2-3 days)
 
-1. Update root layout with language provider:
+1. Update root layout with locale support:
    ```typescript
-   // app/layout.tsx
-   import { NextIntlClientProvider } from 'next-intl';
-   import { getLocale, getMessages } from 'next-intl/server';
+   // app/[locale]/layout.tsx
+   import {NextIntlClientProvider} from 'next-intl';
+   import {getMessages} from 'next-intl/server';
+   import {notFound} from 'next/navigation';
+   import {routing} from '@/i18n/routing';
    
-   export default async function RootLayout({
-     children
+   export function generateStaticParams() {
+     return routing.locales.map((locale) => ({locale}));
+   }
+   
+   export default async function LocaleLayout({
+     children,
+     params: {locale}
    }: {
      children: React.ReactNode;
+     params: {locale: string};
    }) {
-     const locale = await getLocale();
+     if (!routing.locales.includes(locale as any)) {
+       notFound();
+     }
+   
      const messages = await getMessages();
    
      return (
        <html lang={locale}>
          <body>
            <NextIntlClientProvider messages={messages}>
-             <ThemeProvider>
-               {children}
-             </ThemeProvider>
+             {children}
            </NextIntlClientProvider>
          </body>
        </html>
@@ -214,131 +279,54 @@ Create a comprehensive message structure covering all UI components:
    }
    ```
 
-2. Create language switcher component:
+2. Update language switcher component:
    ```typescript
    // components/language-switcher.tsx
-   import { useLocale } from 'next-intl';
-   import { useRouter } from 'next/navigation';
+   import {useLocale} from 'next-intl';
+   import {useRouter, usePathname} from '@/i18n/routing';
+   import {useTranslations} from 'next-intl';
    
    export function LanguageSwitcher() {
+     const t = useTranslations('common.language');
      const locale = useLocale();
      const router = useRouter();
+     const pathname = usePathname();
    
      return (
        <select
          value={locale}
          onChange={(e) => {
-           // This will be enhanced with proper locale storage
-           router.refresh();
+           router.replace(pathname, {locale: e.target.value});
          }}
        >
-         <option value="en">English</option>
-         <option value="th">ไทย</option>
+         <option value="en">{t('en')}</option>
+         <option value="th">{t('th')}</option>
        </select>
      );
    }
    ```
 
-3. Update components with translations:
-
-   a. Overview Component:
+3. Enable static rendering for pages:
    ```typescript
-   // components/overview.tsx
-   import { useTranslations } from 'next-intl';
-   import Link from 'next/link';
-   import { motion } from 'framer-motion';
-   import { MessageIcon, VercelIcon } from './icons';
+   // app/[locale]/page.tsx
+   import {setRequestLocale} from 'next-intl/server';
    
-   export const Overview = () => {
-     const t = useTranslations('overview');
+   export default function IndexPage({params: {locale}}) {
+     setRequestLocale(locale);
+   
+     const t = useTranslations('IndexPage');
    
      return (
-       <motion.div
-         key="overview"
-         className="max-w-3xl mx-auto md:mt-20"
-         initial={{ opacity: 0, scale: 0.98 }}
-         animate={{ opacity: 1, scale: 1 }}
-         exit={{ opacity: 0, scale: 0.98 }}
-         transition={{ delay: 0.5 }}
-       >
-         <div className="rounded-xl p-6 flex flex-col gap-8 leading-relaxed text-center max-w-xl">
-           <p className="flex flex-row justify-center gap-4 items-center">
-             <VercelIcon size={32} />
-             <span>+</span>
-             <MessageIcon size={32} />
-           </p>
-           <p>
-             {t.rich('description', {
-               openSourceLink: (chunks) => (
-                 <Link
-                   className="font-medium underline underline-offset-4"
-                   href={t('links.github')}
-                   target="_blank"
-                 >
-                   {chunks}
-                 </Link>
-               ),
-               streamText: (chunks) => (
-                 <code className="rounded-md bg-muted px-1 py-0.5">
-                   streamText
-                 </code>
-               ),
-               useChatHook: (chunks) => (
-                 <code className="rounded-md bg-muted px-1 py-0.5">
-                   useChat
-                 </code>
-               ),
-             })}
-           </p>
-           <p>
-             {t.rich('learnMore', {
-               docsLink: (chunks) => (
-                 <Link
-                   className="font-medium underline underline-offset-4"
-                   href={t('links.docs')}
-                   target="_blank"
-                 >
-                   {chunks}
-                 </Link>
-               ),
-             })}
-           </p>
-         </div>
-       </motion.div>
-     );
-   };
-   ```
-
-   b. Auth Form:
-   ```typescript
-   import { useTranslations } from 'next-intl';
-   
-   export function AuthForm() {
-     const t = useTranslations('auth');
-     return (
-       <form>
-         <Label>{t('login.emailLabel')}</Label>
-         <Input />
-         <Label>{t('login.passwordLabel')}</Label>
-         <Input />
-       </form>
+       // ...
      );
    }
    ```
 
-   c. Message Actions:
-   ```typescript
-   import { useTranslations } from 'next-intl';
-   
-   export function MessageActions() {
-     const t = useTranslations('messageActions');
-     return (
-       // ...
-       <TooltipContent>{t('copy')}</TooltipContent>
-       // ...
-     );
-   }
-   ```
+4. Update components with translations:
+   - Replace all hardcoded strings with translation keys
+   - Use `useTranslations` hook for accessing translations
+   - Update links to use next-intl's Link component
+   - Add proper typing for translation keys
 
 ### Phase 4: Testing (1-2 days)
 
@@ -349,29 +337,33 @@ Create a comprehensive message structure covering all UI components:
    - Check chat interface
    - Test language switching
    - Verify fallback behavior
+   - Test static rendering
 
 2. Documentation:
    - Update README with i18n information
    - Document translation process
    - Add language switching instructions
+   - Document static rendering setup
 
 ## 4. Key Considerations
 
-### Minimal Impact
-- No route restructuring required
-- Existing components remain in place
-- Auth flow remains unchanged
-- Minimal changes to existing logic
-
 ### Performance
+- Static rendering enabled for better performance
 - Messages loaded only when needed
 - No additional client-side JS for basic functionality
 - Maintains current bundle sizes
 
 ### User Experience
-- Language preference can be stored in user settings
-- Smooth language switching
+- Language preference persisted in URL
+- Smooth language switching with proper routing
 - Fallback to English when translation missing
+- SEO-friendly URLs with locale prefixes
+
+### Maintainability
+- Type-safe translations
+- Centralized routing configuration
+- Clear separation of concerns
+- Easy to add new languages
 
 ## 5. Future Enhancements
 
@@ -385,6 +377,7 @@ Create a comprehensive message structure covering all UI components:
    - Translation management system
    - Automated translation workflow
    - Regional content variations
+   - Domain-based routing (e.g., en.example.com)
 
 ## 6. Timeline
 
@@ -398,22 +391,26 @@ Total estimated time: 5-7 days
 ## 7. Implementation Strategy
 
 1. Implement changes incrementally:
-   - Start with basic setup
+   - Start with routing infrastructure
    - Add translations gradually
    - Update components one at a time
+   - Enable static rendering
    - No big-bang changes
 
 2. Rollout Process:
-   - Deploy infrastructure changes first
+   - Deploy routing changes first
    - Add English translations
    - Test thoroughly
    - Add Thai translations
    - Enable language switching
+   - Enable static rendering
 
 ## 8. Success Metrics
 
 - All user-facing text is translatable
 - No breaking changes to existing functionality
-- Smooth language switching
-- Minimal performance impact
+- Smooth language switching with proper routing
+- Static rendering enabled for better performance
+- SEO-friendly URLs with locale prefixes
+- Type-safe translations throughout the app
 - Maintainable translation structure
