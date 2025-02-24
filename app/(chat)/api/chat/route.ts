@@ -5,7 +5,7 @@ import {
   streamText,
 } from "ai";
 
-import { auth } from "@/app/[locale]/(auth)/auth";
+import { auth } from '@/app/(auth)/auth';
 import { myProvider } from "@/lib/ai/models";
 import { systemPrompt } from "@/lib/ai/prompts";
 import {
@@ -20,7 +20,7 @@ import {
   sanitizeResponseMessages,
 } from "@/lib/utils";
 
-import { generateTitleFromUserMessage } from "@/app/[locale]/(chat)/action";
+import { generateTitleFromUserMessage } from "@/app/(chat)/action";
 import { createDocument } from "@/lib/ai/tools/create-document";
 import { updateDocument } from "@/lib/ai/tools/update-document";
 import { requestSuggestions } from "@/lib/ai/tools/request-suggestions";

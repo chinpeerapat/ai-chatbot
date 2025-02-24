@@ -1,3 +1,5 @@
+'use client';
+
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -9,13 +11,18 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Languages } from 'lucide-react';
 
+const LOCALES = ['en', 'th'] as const;
+
 export function LanguageSwitcher() {
   const t = useTranslations('common.language');
   const locale = useLocale();
   const router = useRouter();
 
-  const handleLanguageChange = (newLocale: string) => {
-    // This will be enhanced with proper locale storage
+  const handleLanguageChange = async (newLocale: string) => {
+    // Set the cookie for the whole app
+    document.cookie = `NEXT_LOCALE=${newLocale};path=/;max-age=31536000`; // 1 year
+    
+    // Refresh the page to apply new language
     router.refresh();
   };
 
@@ -28,18 +35,15 @@ export function LanguageSwitcher() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem
-          onClick={() => handleLanguageChange('en')}
-          className={locale === 'en' ? 'bg-muted' : ''}
-        >
-          {t('en')}
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => handleLanguageChange('th')}
-          className={locale === 'th' ? 'bg-muted' : ''}
-        >
-          {t('th')}
-        </DropdownMenuItem>
+        {LOCALES.map((lang) => (
+          <DropdownMenuItem
+            key={lang}
+            onClick={() => handleLanguageChange(lang)}
+            className={locale === lang ? 'bg-muted' : ''}
+          >
+            {t(lang)}
+          </DropdownMenuItem>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );

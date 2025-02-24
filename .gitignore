@@ -43,3 +43,4 @@ docs/i18n-integration-plan.md
 i18n/analysis.js
 i18n/i18n-analyzer.ts
 .env.local
+ai-chatbot-i18n.code-workspace

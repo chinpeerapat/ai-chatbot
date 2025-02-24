@@ -1,4 +1,4 @@
-import { auth } from '@/app/[locale]/(auth)/auth';
+import { auth } from '@/app/(auth)/auth';
 import { getChatsByUserId } from '@/lib/db/queries';
 import { NextResponse } from 'next/server';
 

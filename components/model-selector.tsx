@@ -3,7 +3,7 @@
 import { startTransition, useMemo, useOptimistic, useState } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { saveChatModelAsCookie } from '@/app/[locale]/(chat)/action';
+import { saveChatModelAsCookie } from '@/app/(chat)/action';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,

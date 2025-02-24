@@ -156,6 +156,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
   const { id } = useParams();
   const pathname = usePathname();
   const t = useTranslations();
+  
   const {
     data: history,
     isLoading,
@@ -401,14 +402,21 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('common.areYouSure')}</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle aria-label={t('common.areYouSure')}>
+              {t('common.areYouSure')}
+            </AlertDialogTitle>
+            <AlertDialogDescription aria-label={t('common.deleteConfirmation')}>
               {t('common.deleteConfirmation')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete}>
+            <AlertDialogCancel aria-label={t('common.cancel')}>
+              {t('common.cancel')}
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDelete}
+              aria-label={t('common.continue')}
+            >
               {t('common.continue')}
             </AlertDialogAction>
           </AlertDialogFooter>
