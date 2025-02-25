@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "AI Chatbot",
+  "version": "1.0.0",
+  "description": "AI Chatbot Chrome Extension",
+  "permissions": ["storage", "sidePanel"],
+  "host_permissions": ["http://localhost:3000/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup/popup.html"
+  },
+  "side_panel": {
+    "default_path": "sidepanel/sidepanel.html"
+  }
+} 
