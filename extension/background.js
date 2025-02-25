@@ -1,5 +1,5 @@
 // Background script for handling API calls
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'https://web.goodboy.chat';
 
 // Handle authentication and API calls
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -63,9 +63,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     fetch(`${API_BASE_URL}/api/auth/session`, {
       credentials: 'include' // Include cookies for authentication
     })
-    .then(response => response.json())
+    .then(response => {
+      // Check if the response is JSON
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        return response.json();
+      } else {
+        // If not JSON, assume not authenticated
+        throw new Error('Not authenticated');
+      }
+    })
     .then(data => {
-      if (data.user) {
+      if (data && data.user) {
         chrome.runtime.sendMessage({ 
           type: 'AUTH_STATUS', 
           isAuthenticated: true,
@@ -87,6 +96,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       });
     });
     
+    return true;
+  }
+  
+  if (request.type === 'OPEN_LOGIN_PAGE') {
+    chrome.tabs.create({ url: `${API_BASE_URL}/login?extension=true` });
     return true;
   }
 });

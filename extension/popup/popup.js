@@ -27,8 +27,19 @@ document.addEventListener('DOMContentLoaded', function() {
         authStatusElement.className = 'auth-status unauthenticated';
         authStatusElement.innerHTML = `
           <p>Not authenticated. Please log in to the main app first.</p>
-          <a href="http://localhost:3000/login" target="_blank">Log in</a>
+          <button id="login-button">Log in</button>
         `;
+        
+        // Add event listener to login button
+        setTimeout(() => {
+          const loginButton = document.getElementById('login-button');
+          if (loginButton) {
+            loginButton.addEventListener('click', function() {
+              chrome.runtime.sendMessage({ type: 'OPEN_LOGIN_PAGE' });
+              window.close(); // Close the popup
+            });
+          }
+        }, 0);
       }
     }
   });

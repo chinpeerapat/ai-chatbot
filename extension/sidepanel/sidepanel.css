@@ -190,4 +190,19 @@ body {
 
 .auth-message a:hover {
   text-decoration: underline;
+}
+
+.auth-message button {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.auth-message button:hover {
+  background-color: #1d4ed8;
 } 

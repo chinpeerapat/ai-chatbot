@@ -61,4 +61,20 @@ button:active {
 .auth-status.unauthenticated {
   background-color: #fee2e2;
   color: #b91c1c;
+}
+
+#login-button {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 8px;
+}
+
+#login-button:hover {
+  background-color: #1d4ed8;
 } 

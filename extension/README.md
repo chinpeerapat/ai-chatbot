@@ -17,7 +17,7 @@ This Chrome extension provides a convenient way to access the AI Chatbot directl
 
 ## Usage
 
-1. Make sure you're logged in to the main AI Chatbot application at http://localhost:3000
+1. Make sure you're logged in to the main AI Chatbot application at https://web.goodboy.chat
 2. Click the extension icon in your Chrome toolbar to open the popup
 3. Click "Open Side Panel" to open the chatbot in the side panel
 4. You can now chat with the AI assistant while browsing any website

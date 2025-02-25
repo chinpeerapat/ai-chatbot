@@ -1,41 +1,38 @@
 // Main sidepanel script
-const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
-  const [isCheckingAuth, setIsCheckingAuth] = React.useState(true);
-  const [user, setUser] = React.useState(null);
+document.addEventListener('DOMContentLoaded', function() {
+  const rootElement = document.getElementById('root');
+  let chatCleanup = null;
+  let isAuthenticated = false;
   
-  // Check authentication status on load
-  React.useEffect(() => {
-    chrome.runtime.sendMessage({ type: 'CHECK_AUTH' });
-    
-    const handleMessage = (message) => {
-      if (message.type === 'AUTH_STATUS') {
-        setIsAuthenticated(message.isAuthenticated);
-        if (message.user) {
-          setUser(message.user);
-        }
-        setIsCheckingAuth(false);
+  // Show loading indicator
+  const loadingIndicator = document.createElement('div');
+  loadingIndicator.className = 'loading-indicator';
+  loadingIndicator.innerHTML = `
+    <div class="loading-dots">
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+    </div>
+  `;
+  rootElement.appendChild(loadingIndicator);
+  
+  // Check authentication status
+  chrome.runtime.sendMessage({ type: 'CHECK_AUTH' });
+  
+  // Listen for authentication status response
+  chrome.runtime.onMessage.addListener(function(message) {
+    if (message.type === 'AUTH_STATUS') {
+      // Remove loading indicator
+      rootElement.innerHTML = '';
+      
+      isAuthenticated = message.isAuthenticated;
+      
+      // Initialize chat interface
+      if (chatCleanup) {
+        chatCleanup();
       }
-    };
-    
-    chrome.runtime.onMessage.addListener(handleMessage);
-    return () => chrome.runtime.onMessage.removeListener(handleMessage);
-  }, []);
-  
-  if (isCheckingAuth) {
-    return (
-      <div className="loading-indicator">
-        <div className="loading-dots">
-          <div className="loading-dot"></div>
-          <div className="loading-dot"></div>
-          <div className="loading-dot"></div>
-        </div>
-      </div>
-    );
-  }
-  
-  return <Chat isAuthenticated={isAuthenticated} user={user} />;
-};
-
-// Render the app
-ReactDOM.render(<App />, document.getElementById('root')); 
+      
+      chatCleanup = createChatInterface(rootElement, isAuthenticated);
+    }
+  });
+}); 

@@ -1,5 +1,5 @@
 // Message component for displaying chat messages
-const Message = ({ message }) => {
+function createMessageElement(message) {
   const { role, content, createdAt } = message;
   const isUser = role === 'user';
   const messageClass = isUser ? 'message message-user' : 'message message-assistant';
@@ -11,12 +11,23 @@ const Message = ({ message }) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
   
-  return (
-    <div className={messageClass}>
-      <div className="message-content">{content}</div>
-      {createdAt && (
-        <div className="message-timestamp">{formatTimestamp(createdAt)}</div>
-      )}
-    </div>
-  );
-}; 
+  // Create message element
+  const messageElement = document.createElement('div');
+  messageElement.className = messageClass;
+  
+  // Create content element
+  const contentElement = document.createElement('div');
+  contentElement.className = 'message-content';
+  contentElement.textContent = content;
+  messageElement.appendChild(contentElement);
+  
+  // Create timestamp element if createdAt exists
+  if (createdAt) {
+    const timestampElement = document.createElement('div');
+    timestampElement.className = 'message-timestamp';
+    timestampElement.textContent = formatTimestamp(createdAt);
+    messageElement.appendChild(timestampElement);
+  }
+  
+  return messageElement;
+} 

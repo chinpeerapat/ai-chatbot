@@ -3,8 +3,8 @@
   "name": "AI Chatbot",
   "version": "1.0.0",
   "description": "AI Chatbot Chrome Extension",
-  "permissions": ["storage", "sidePanel"],
-  "host_permissions": ["http://localhost:3000/*"],
+  "permissions": ["storage", "sidePanel", "tabs"],
+  "host_permissions": ["https://web.goodboy.chat/*"],
   "background": {
     "service_worker": "background.js"
   },
