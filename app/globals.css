@@ -16,9 +16,56 @@
     }
 }
 
+/* Apply Thai font automatically when the language is set to Thai */
+html[lang="th"] {
+    font-family: var(--font-ibm-plex-sans-thai), 'geist', sans-serif;
+    line-height: 1.6;
+    font-feature-settings: "locl" 1;
+}
+
 @layer utilities {
     .text-balance {
         text-wrap: balance;
+    }
+    
+    /* Thai text utility class */
+    .thai-text {
+        font-family: var(--font-ibm-plex-sans-thai), 'geist', sans-serif;
+        /* Adjust line height for Thai text which often needs more vertical space */
+        line-height: 1.6;
+        /* Improve Thai text rendering */
+        font-feature-settings: "locl" 1;
+    }
+    
+    /* Animation utilities */
+    .animate-in {
+        animation-duration: 150ms;
+        animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: transform, opacity;
+    }
+    
+    .fade-in-0 {
+        animation-name: fade-in;
+    }
+    
+    .fade-in-80 {
+        animation-name: fade-in;
+        animation-duration: 80ms;
+    }
+    
+    .zoom-in-95 {
+        animation-name: zoom-in;
+        transform-origin: center;
+    }
+    
+    @keyframes fade-in {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @keyframes zoom-in {
+        from { transform: scale(0.95); }
+        to { transform: scale(1); }
     }
 }
 
@@ -175,4 +222,13 @@
 
 .suggestion-highlight {
     @apply bg-blue-200 hover:bg-blue-300 dark:hover:bg-blue-400/50 dark:text-blue-50 dark:bg-blue-500/40;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+  body {
+    @apply bg-background text-foreground;
+    }
 }

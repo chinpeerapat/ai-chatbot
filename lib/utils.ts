@@ -229,3 +229,14 @@ export function getDocumentTimestampByIndex(
 
   return documents[index].createdAt;
 }
+
+/**
+ * Detects if a string contains Thai characters
+ * @param text The text to check
+ * @returns True if the text contains Thai characters
+ */
+export function containsThai(text: string): boolean {
+  // Thai Unicode range: \u0E00-\u0E7F
+  const thaiRegex = /[\u0E00-\u0E7F]/;
+  return thaiRegex.test(text);
+}

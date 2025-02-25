@@ -70,7 +70,8 @@ const PureChatItem = ({
   onDelete: (chatId: string) => void;
   setOpenMobile: (open: boolean) => void;
 }) => {
-  const t = useTranslations();
+  const commonT = useTranslations('common');
+  const visibilityT = useTranslations('visibility');
   const { visibilityType, setVisibilityType } = useChatVisibility({
     chatId: chat.id,
     initialVisibility: chat.visibility,
@@ -99,7 +100,7 @@ const PureChatItem = ({
           <DropdownMenuSub>
             <DropdownMenuSubTrigger className="cursor-pointer">
               <ShareIcon />
-              <span>{t('common.share')}</span>
+              <span>{commonT('share')}</span>
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
               <DropdownMenuSubContent>
@@ -111,7 +112,7 @@ const PureChatItem = ({
                 >
                   <div className="flex flex-row gap-2 items-center">
                     <LockIcon size={12} />
-                    <span>{t('visibility.private.label')}</span>
+                    <span>{visibilityT('private.label')}</span>
                   </div>
                   {visibilityType === 'private' ? (
                     <CheckCircleFillIcon />
@@ -125,7 +126,7 @@ const PureChatItem = ({
                 >
                   <div className="flex flex-row gap-2 items-center">
                     <GlobeIcon />
-                    <span>{t('visibility.public.label')}</span>
+                    <span>{visibilityT('public.label')}</span>
                   </div>
                   {visibilityType === 'public' ? <CheckCircleFillIcon /> : null}
                 </DropdownMenuItem>
@@ -138,7 +139,7 @@ const PureChatItem = ({
             onSelect={() => onDelete(chat.id)}
           >
             <TrashIcon />
-            <span>{t('common.delete')}</span>
+            <span>{commonT('delete')}</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -155,7 +156,8 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
   const { setOpenMobile } = useSidebar();
   const { id } = useParams();
   const pathname = usePathname();
-  const t = useTranslations();
+  const commonT = useTranslations('common');
+  const sidebarT = useTranslations('sidebar');
   
   const {
     data: history,
@@ -178,16 +180,16 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     });
 
     toast.promise(deletePromise, {
-      loading: t('common.loading'),
+      loading: commonT('loading'),
       success: () => {
         mutate((history) => {
           if (history) {
             return history.filter((h) => h.id !== id);
           }
         });
-        return t('common.deleted');
+        return commonT('deleted');
       },
-      error: t('common.error'),
+      error: commonT('error'),
     });
 
     setShowDeleteDialog(false);
@@ -202,7 +204,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
       <SidebarGroup>
         <SidebarGroupContent>
           <div className="px-2 text-zinc-500 w-full flex flex-row justify-center items-center text-sm gap-2">
-            {t('sidebar.emptyState.loggedOut')}
+            {sidebarT('emptyState.loggedOut')}
           </div>
         </SidebarGroupContent>
       </SidebarGroup>
@@ -213,7 +215,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     return (
       <SidebarGroup>
         <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
-          {t('sidebar.timeGroups.today')}
+          {sidebarT('timeGroups.today')}
         </div>
         <SidebarGroupContent>
           <div className="flex flex-col">
@@ -243,7 +245,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
       <SidebarGroup>
         <SidebarGroupContent>
           <div className="px-2 text-zinc-500 w-full flex flex-row justify-center items-center text-sm gap-2">
-            {t('sidebar.emptyState.noChats')}
+            {sidebarT('emptyState.noChats')}
           </div>
         </SidebarGroupContent>
       </SidebarGroup>
@@ -297,7 +299,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                     {groupedChats.today.length > 0 && (
                       <>
                         <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
-                          {t('sidebar.timeGroups.today')}
+                          {sidebarT('timeGroups.today')}
                         </div>
                         {groupedChats.today.map((chat) => (
                           <ChatItem
@@ -317,7 +319,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                     {groupedChats.yesterday.length > 0 && (
                       <>
                         <div className="px-2 py-1 text-xs text-sidebar-foreground/50 mt-6">
-                          {t('sidebar.timeGroups.yesterday')}
+                          {sidebarT('timeGroups.yesterday')}
                         </div>
                         {groupedChats.yesterday.map((chat) => (
                           <ChatItem
@@ -337,7 +339,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                     {groupedChats.lastWeek.length > 0 && (
                       <>
                         <div className="px-2 py-1 text-xs text-sidebar-foreground/50 mt-6">
-                          {t('sidebar.timeGroups.lastWeek')}
+                          {sidebarT('timeGroups.lastWeek')}
                         </div>
                         {groupedChats.lastWeek.map((chat) => (
                           <ChatItem
@@ -357,7 +359,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                     {groupedChats.lastMonth.length > 0 && (
                       <>
                         <div className="px-2 py-1 text-xs text-sidebar-foreground/50 mt-6">
-                          {t('sidebar.timeGroups.lastMonth')}
+                          {sidebarT('timeGroups.lastMonth')}
                         </div>
                         {groupedChats.lastMonth.map((chat) => (
                           <ChatItem
@@ -377,7 +379,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                     {groupedChats.older.length > 0 && (
                       <>
                         <div className="px-2 py-1 text-xs text-sidebar-foreground/50 mt-6">
-                          {t('sidebar.timeGroups.older')}
+                          {sidebarT('timeGroups.older')}
                         </div>
                         {groupedChats.older.map((chat) => (
                           <ChatItem
@@ -402,22 +404,22 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle aria-label={t('common.areYouSure')}>
-              {t('common.areYouSure')}
+            <AlertDialogTitle aria-label={commonT('areYouSure')}>
+              {commonT('areYouSure')}
             </AlertDialogTitle>
-            <AlertDialogDescription aria-label={t('common.deleteConfirmation')}>
-              {t('common.deleteConfirmation')}
+            <AlertDialogDescription aria-label={commonT('deleteConfirmation')}>
+              {commonT('deleteConfirmation')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel aria-label={t('common.cancel')}>
-              {t('common.cancel')}
+            <AlertDialogCancel aria-label={commonT('cancel')}>
+              {commonT('cancel')}
             </AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleDelete}
-              aria-label={t('common.continue')}
+              aria-label={commonT('continue')}
             >
-              {t('common.continue')}
+              {commonT('continue')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

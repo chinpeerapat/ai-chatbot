@@ -49,7 +49,7 @@ const PurePreviewMessage = ({
   isReadonly: boolean;
 }) => {
   const [mode, setMode] = useState<'view' | 'edit'>('view');
-  const t = useTranslations();
+  const t = useTranslations('common');
 
   return (
     <AnimatePresence>
@@ -110,7 +110,7 @@ const PurePreviewMessage = ({
                         <PencilEditIcon />
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent>{t('common.edit')}</TooltipContent>
+                    <TooltipContent>{t('edit')}</TooltipContent>
                   </Tooltip>
                 )}
 

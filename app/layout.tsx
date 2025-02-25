@@ -1,17 +1,30 @@
 import type { Metadata } from "next";
 import { Toaster } from "sonner";
 import { NextIntlClientProvider } from "next-intl";
-import { getLocale, getMessages } from "next-intl/server";
+import { getMessages } from "next-intl/server";
 import type { ReactNode } from "react";
+import { cookies } from "next/headers";
+import { IBM_Plex_Sans_Thai } from 'next/font/google';
 
 import { ThemeProvider } from "@/components/theme-provider";
 
 import "./globals.css";
 
+const LOCALES = ['en', 'th'] as const;
+const DEFAULT_LOCALE = 'en';
+
+// Initialize the IBM Plex Sans Thai font
+const ibmPlexSansThai = IBM_Plex_Sans_Thai({
+  weight: ['400', '700'],
+  subsets: ['thai', 'latin'],
+  display: 'swap',
+  variable: '--font-ibm-plex-sans-thai',
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://chat.vercel.ai"),
-  title: "Next.js Chatbot Template",
-  description: "Next.js chatbot template using the AI SDK.",
+  title: "AI Chatbot",
+  description: "Next.js chatbot with AI capabilities and i18n support.",
 };
 
 export const viewport = {
@@ -43,13 +56,16 @@ export default async function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-  const locale = await getLocale();
+  const cookieStore = await cookies();
+  const locale = cookieStore.get('NEXT_LOCALE')?.value || DEFAULT_LOCALE;
+  const validLocale = LOCALES.includes(locale as any) ? locale : DEFAULT_LOCALE;
   const messages = await getMessages();
 
   return (
     <html
-      lang={locale}
+      lang={validLocale}
       suppressHydrationWarning
+      className={`${ibmPlexSansThai.variable}`}
     >
       <head>
         <script
@@ -58,9 +74,9 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased">
+      <body className="antialiased min-h-screen">
         <NextIntlClientProvider
-          locale={locale}
+          locale={validLocale}
           messages={messages}
           timeZone="Asia/Bangkok"
         >
@@ -70,8 +86,10 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <Toaster position="top-center" />
-            {children}
+            <main className="flex min-h-screen flex-col">
+              <Toaster position="top-center" />
+              {children}
+            </main>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

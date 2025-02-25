@@ -9,9 +9,22 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Languages } from 'lucide-react';
+import { Check, Languages } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 const LOCALES = ['en', 'th'] as const;
+
+// Map of locale codes to their full names (for accessibility)
+const LOCALE_NAMES: Record<string, string> = {
+  en: 'English',
+  th: 'Thai',
+};
 
 export function LanguageSwitcher() {
   const t = useTranslations('common.language');
@@ -19,6 +32,8 @@ export function LanguageSwitcher() {
   const router = useRouter();
 
   const handleLanguageChange = async (newLocale: string) => {
+    if (newLocale === locale) return; // Don't refresh if the same language is selected
+    
     // Set the cookie for the whole app
     document.cookie = `NEXT_LOCALE=${newLocale};path=/;max-age=31536000`; // 1 year
     
@@ -27,24 +42,53 @@ export function LanguageSwitcher() {
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <Languages className="size-4" />
-          <span className="sr-only">{t('switch')}</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        {LOCALES.map((lang) => (
-          <DropdownMenuItem
-            key={lang}
-            onClick={() => handleLanguageChange(lang)}
-            className={locale === lang ? 'bg-muted' : ''}
+    <TooltipProvider>
+      <Tooltip>
+        <DropdownMenu>
+          <TooltipTrigger asChild>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="flex items-center gap-1.5 px-2.5 transition-all hover:bg-muted"
+                aria-label={t('switch')}
+              >
+                <Languages className="size-4" />
+                <span className="text-xs font-medium uppercase">{locale}</span>
+              </Button>
+            </DropdownMenuTrigger>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            {t('switch')}
+          </TooltipContent>
+          <DropdownMenuContent 
+            align="end" 
+            className="min-w-32 animate-in fade-in-80 zoom-in-95"
           >
-            {t(lang)}
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+            {LOCALES.map((lang) => {
+              const isActive = locale === lang;
+              return (
+                <DropdownMenuItem
+                  key={lang}
+                  onClick={() => handleLanguageChange(lang)}
+                  className={cn(
+                    "flex items-center justify-between gap-2 cursor-pointer transition-colors",
+                    isActive && "bg-muted font-medium"
+                  )}
+                >
+                  <span>
+                    {t(lang)}
+                    <span className="ml-1.5 text-xs text-muted-foreground">
+                      ({lang.toUpperCase()})
+                    </span>
+                  </span>
+                  {isActive && <Check className="size-4 text-primary" />}
+                </DropdownMenuItem>
+              );
+            })}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
