@@ -19,7 +19,7 @@
     "i18n": "ts-node i18n-analyzer.ts"
   },
   "dependencies": {
-    "@ai-sdk/fireworks": "^0.1.8",
+    "@ai-sdk/fireworks": "^0.1.12",
     "@ai-sdk/openai": "1.1.9",
     "@babel/parser": "^7.26.9",
     "@babel/traverse": "^7.26.9",
