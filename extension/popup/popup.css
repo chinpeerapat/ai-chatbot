@@ -2,7 +2,9 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f9fafb;
+  background-color: #ffffff;
+  color: #111827;
+  line-height: 1.5;
 }
 
 .popup-container {
@@ -11,11 +13,24 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: #ffffff;
+}
+
+.logo {
+  margin-bottom: 16px;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 h1 {
-  font-size: 18px;
-  margin-bottom: 12px;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
   color: #111827;
 }
 
@@ -23,18 +38,21 @@ p {
   font-size: 14px;
   color: #4b5563;
   text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  line-height: 1.5;
 }
 
 button {
   background-color: #2563eb;
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: 10px 20px;
+  border-radius: 8px;
   font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, transform 0.1s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 button:hover {
@@ -43,38 +61,79 @@ button:hover {
 
 button:active {
   background-color: #1e40af;
+  transform: scale(0.98);
 }
 
 .auth-status {
-  margin-top: 16px;
-  padding: 8px;
-  border-radius: 4px;
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 8px;
   width: 100%;
   text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .auth-status.authenticated {
-  background-color: #d1fae5;
+  background-color: #ecfdf5;
   color: #065f46;
+  border: 1px solid #d1fae5;
 }
 
 .auth-status.unauthenticated {
-  background-color: #fee2e2;
+  background-color: #fef2f2;
   color: #b91c1c;
+  border: 1px solid #fee2e2;
 }
 
-#login-button {
+.auth-status.error {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fee2e2;
+}
+
+.auth-status p {
+  margin: 0 0 12px 0;
+  color: inherit;
+}
+
+#login-button, #reload-button {
   background-color: #2563eb;
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: 10px 20px;
+  border-radius: 8px;
   font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s;
-  margin-top: 8px;
+  transition: background-color 0.2s, transform 0.1s;
+  margin-top: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  width: auto;
+  display: inline-block;
 }
 
-#login-button:hover {
+#login-button:hover, #reload-button:hover {
   background-color: #1d4ed8;
+}
+
+#login-button:active, #reload-button:active {
+  transform: scale(0.98);
+}
+
+/* Responsive adjustments */
+@media (max-width: 360px) {
+  .popup-container {
+    width: 100%;
+    padding: 16px;
+  }
+  
+  button, #login-button, #reload-button {
+    padding: 8px 16px;
+  }
 } 

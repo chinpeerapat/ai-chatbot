@@ -4,11 +4,9 @@
     "description": "Next.js chatbot template using the AI SDK."
   },
   "overview": {
-    "title": "Open Source AI Chatbot",
-    "description": "This is an {openSourceLink} chatbot template built with Next.js and the AI SDK by Vercel. It uses the {streamText} function in the server and the {useChatHook} hook on the client to create a seamless chat experience.",
-    "openSourceLink": "open source",
-    "learnMore": "You can learn more about the AI SDK by visiting the {docsLink}.",
-    "docsLink": "docs",
+    "title": "Welcome",
+    "description": "Welcome to our AI chatbot! This is an intelligent assistant designed to help you with various tasks and answer your questions. Feel free to start a conversation and explore what I can do.",
+    "learnMore": "To get started, simply type your message in the chat box below.",
     "links": {
       "github": "https://github.com/vercel/ai-chatbot",
       "docs": "https://sdk.vercel.ai/docs"

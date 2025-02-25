@@ -4,11 +4,9 @@
     "description": "เทมเพลตแชทบอท Next.js ที่ใช้ AI SDK"
   },
   "overview": {
-    "title": "แชทบอท AI โอเพนซอร์ส",
-    "description": "นี่คือ{openSourceLink}แชทบอทที่สร้างด้วย Next.js และ AI SDK โดย Vercel มันใช้ฟังก์ชัน {streamText} ในเซิร์ฟเวอร์และฮุค {useChatHook} ในไคลเอนต์เพื่อสร้างประสบการณ์การแชทที่ราบรื่น",
-    "openSourceLink": "โอเพนซอร์ส",
-    "learnMore": "คุณสามารถเรียนรู้เพิ่มเติมเกี่ยวกับ AI SDK ได้โดยเข้าไปที่{docsLink}",
-    "docsLink": "เอกสาร",
+    "title": "ยินดีต้อนรับ",
+    "description": "ยินดีต้อนรับสู่แชทบอท AI ของเรา! นี่คือผู้ช่วยอัจฉริยะที่ออกแบบมาเพื่อช่วยคุณในงานต่างๆ และตอบคำถามของคุณ เริ่มต้นสนทนาและค้นพบสิ่งที่ฉันสามารถทำได้",
+    "learnMore": "เริ่มต้นใช้งานได้ง่ายๆ เพียงพิมพ์ข้อความของคุณในกล่องแชทด้านล่าง",
     "links": {
       "github": "https://github.com/vercel/ai-chatbot",
       "docs": "https://sdk.vercel.ai/docs"

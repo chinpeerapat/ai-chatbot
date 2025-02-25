@@ -17,10 +17,20 @@ document.addEventListener('DOMContentLoaded', function() {
   rootElement.appendChild(loadingIndicator);
   
   // Check authentication status
-  chrome.runtime.sendMessage({ type: 'CHECK_AUTH' });
+  try {
+    chrome.runtime.sendMessage({ type: 'CHECK_AUTH' }, function(response) {
+      console.log('Received response from CHECK_AUTH:', response);
+      // We don't need to do anything with the response, just ensuring the callback is provided
+    });
+  } catch (error) {
+    console.error('Error sending CHECK_AUTH message:', error);
+    showError(rootElement, 'Failed to connect to extension. Please try reloading the page.');
+  }
   
   // Listen for authentication status response
   chrome.runtime.onMessage.addListener(function(message) {
+    console.log('Sidepanel received message:', message);
+    
     if (message.type === 'AUTH_STATUS') {
       // Remove loading indicator
       rootElement.innerHTML = '';
@@ -35,4 +45,30 @@ document.addEventListener('DOMContentLoaded', function() {
       chatCleanup = createChatInterface(rootElement, isAuthenticated);
     }
   });
-}); 
+  
+  // Set a timeout to show an error if we don't get a response
+  setTimeout(() => {
+    if (rootElement.contains(loadingIndicator)) {
+      showError(rootElement, 'Authentication check timed out. Please try reloading the page.');
+    }
+  }, 10000); // 10 seconds timeout
+});
+
+// Helper function to show errors
+function showError(rootElement, message) {
+  rootElement.innerHTML = '';
+  const errorElement = document.createElement('div');
+  errorElement.className = 'error-message';
+  errorElement.textContent = message;
+  
+  const reloadButton = document.createElement('button');
+  reloadButton.textContent = 'Reload';
+  reloadButton.addEventListener('click', () => {
+    window.location.reload();
+  });
+  
+  errorElement.appendChild(document.createElement('br'));
+  errorElement.appendChild(reloadButton);
+  
+  rootElement.appendChild(errorElement);
+} 

@@ -15,12 +15,17 @@ function createChatInputElement(onSubmit, isLoading) {
   textarea.disabled = isLoading;
   textarea.rows = 1;
   
-  // Create send button
+  // Create send button with icon
   const button = document.createElement('button');
   button.type = 'submit';
   button.className = 'send-button';
-  button.textContent = 'Send';
   button.disabled = true;
+  button.innerHTML = `
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  `;
   
   // Add elements to form
   form.appendChild(textarea);
