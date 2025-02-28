@@ -67,5 +67,14 @@ function createChatInputElement(onSubmit, isLoading) {
     }
   });
   
+  // Update button state based on loading status
+  const updateLoadingState = (loading) => {
+    textarea.disabled = loading;
+    button.disabled = loading || !textarea.value.trim();
+  };
+  
+  // Expose method to update loading state
+  container.updateLoadingState = updateLoadingState;
+  
   return container;
-} 
+}

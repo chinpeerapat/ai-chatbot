@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
       rootElement.innerHTML = '';
       
       isAuthenticated = message.isAuthenticated;
+      console.log('Authentication status:', isAuthenticated);
       
       // Initialize chat interface
       if (chatCleanup) {
@@ -43,6 +44,14 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       
       chatCleanup = createChatInterface(rootElement, isAuthenticated);
+    }
+    
+    if (message.type === 'STREAM_CHUNK') {
+      console.log('Stream chunk received in sidepanel:', message.data);
+    }
+    
+    if (message.type === 'STREAM_DONE') {
+      console.log('Stream done received in sidepanel');
     }
   });
   

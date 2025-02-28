@@ -37,7 +37,23 @@ document.addEventListener('DOMContentLoaded', function() {
         authStatusElement.className = 'auth-status authenticated';
         authStatusElement.innerHTML = `
           <p>Authenticated as: ${message.user.email || message.user.name || 'User'}</p>
+          <button id="open-sidepanel-btn" class="action-button">Open Chatbot</button>
         `;
+        
+        // Add event listener to the new open button
+        setTimeout(() => {
+          const openButton = document.getElementById('open-sidepanel-btn');
+          if (openButton) {
+            openButton.addEventListener('click', function() {
+              chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+                if (tabs[0]) {
+                  chrome.sidePanel.open({ tabId: tabs[0].id });
+                  window.close();
+                }
+              });
+            });
+          }
+        }, 0);
       } else {
         authStatusElement.className = 'auth-status unauthenticated';
         authStatusElement.innerHTML = `
@@ -90,4 +106,4 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }, 0);
   }
-}); 
+});

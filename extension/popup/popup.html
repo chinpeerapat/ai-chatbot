@@ -1,27 +1,76 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>AI Chatbot</title>
   <link rel="stylesheet" href="popup.css">
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=400, initial-scale=1.0">
+  <style>
+    body {
+      min-width: 375px;
+      width: 375px;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+  </style>
 </head>
+
 <body>
   <div class="popup-container">
     <div class="logo">
       <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M12 16V12" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M12 8H12.01" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path
+          d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+          stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M12 16V12" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M12 8H12.01" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
       </svg>
     </div>
     <h1>AI Chatbot</h1>
-    <p>Click the button below to open the chatbot in the side panel.</p>
+    <p>Your AI-powered assistant right in your browser</p>
     <button id="open-sidepanel">Open Side Panel</button>
+
+    <ul class="features-list">
+      <li>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+          <path d="M22 4L12 14.01l-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+        AI-powered answers to your questions
+      </li>
+      <li>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+          <path d="M22 4L12 14.01l-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+        Seamless access to main app features
+      </li>
+      <li>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+          <path d="M22 4L12 14.01l-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+        Save chats with feedback options
+      </li>
+    </ul>
+
     <div id="auth-status" class="auth-status">
       <p>Checking authentication status...</p>
+    </div>
+
+    <div class="version-info">
+      Version 1.0.0
     </div>
   </div>
   <script src="popup.js"></script>
 </body>
-</html> 
+
+</html>

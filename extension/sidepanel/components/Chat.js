@@ -29,7 +29,8 @@ function createChatInterface(rootElement, isAuthenticated) {
     messages: [],
     isLoading: false,
     chatId: uuid.v4(),
-    streamingMessage: null
+    streamingMessage: null,
+    userVotes: {}
   };
   
   // Create chat container
@@ -69,7 +70,7 @@ function createChatInterface(rootElement, isAuthenticated) {
   };
   
   state.messages.push(welcomeMessage);
-  messagesContainer.appendChild(createMessageElement(welcomeMessage));
+  messagesContainer.appendChild(createMessageElement(welcomeMessage, handleVote));
   
   // Create loading indicator
   const loadingIndicator = document.createElement('div');
@@ -86,6 +87,42 @@ function createChatInterface(rootElement, isAuthenticated) {
   // Add components to chat container
   chatContainer.appendChild(chatHeader);
   chatContainer.appendChild(messagesContainer);
+  
+  // Handle vote function
+  function handleVote(messageId, voteType) {
+    if (state.isLoading) return;
+    
+    // Only allow voting on assistant messages
+    const message = state.messages.find(m => m.id === messageId);
+    if (!message || message.role !== 'assistant') return;
+    
+    // Toggle vote if already voted the same way
+    if (state.userVotes[messageId] === voteType) {
+      // Cancel the vote (not implemented in API)
+      return;
+    }
+    
+    // Send vote to background script
+    chrome.runtime.sendMessage({
+      type: 'VOTE_MESSAGE',
+      chatId: state.chatId,
+      messageId: messageId,
+      voteType: voteType
+    });
+    
+    // Update UI immediately
+    state.userVotes[messageId] = voteType;
+    
+    // Update vote buttons
+    const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
+    if (messageElement) {
+      const upButton = messageElement.querySelector('.vote-up');
+      const downButton = messageElement.querySelector('.vote-down');
+      
+      if (upButton) upButton.classList.toggle('active', voteType === 'up');
+      if (downButton) downButton.classList.toggle('active', voteType === 'down');
+    }
+  }
   
   // Handle message submission
   const handleSubmit = (input) => {
@@ -130,112 +167,61 @@ function createChatInterface(rootElement, isAuthenticated) {
   // Add chat container to root
   rootElement.appendChild(chatContainer);
   
-  // Listen for message chunks from the background script
-  const messageHandler = (message) => {
-    console.log('Received message:', message.type, message);
+  // Simplified function to handle artifact links
+  function handleArtifactLink(artifactId, artifactTitle, artifactType) {
+    // Create artifact link element
+    const artifactLink = document.createElement('div');
+    artifactLink.className = 'artifact-link';
     
-    if (message.type === 'STREAM_CHUNK') {
-      try {
-        // Parse the chunk data
-        console.log('Processing stream chunk:', message.data);
-        const lines = message.data.split('\n').filter(line => line.trim() !== '');
-        console.log('Parsed lines:', lines);
-        
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = line.substring(6);
-            console.log('Processing data:', data);
-            
-            if (data === '[DONE]') {
-              // End of stream
-              console.log('Stream done');
-              if (state.streamingMessage) {
-                state.messages.push(state.streamingMessage);
-                state.streamingMessage = null;
-              }
-              state.isLoading = false;
-              loadingIndicator.style.display = 'none';
-              continue;
-            }
-            
-            try {
-              const parsed = JSON.parse(data);
-              console.log('Parsed JSON:', parsed);
-              
-              // Handle different response formats
-              if (parsed.type === 'text') {
-                // Standard format
-                handleTextChunk(parsed.text);
-              } else if (parsed.choices && parsed.choices.length > 0) {
-                // OpenAI-like format
-                const content = parsed.choices[0].delta?.content || parsed.choices[0].message?.content;
-                if (content) {
-                  handleTextChunk(content);
-                }
-              } else if (parsed.text || parsed.content) {
-                // Alternative formats
-                handleTextChunk(parsed.text || parsed.content);
-              }
-            } catch (e) {
-              console.error('Error parsing JSON:', e, 'Data:', data);
-            }
-          } else {
-            // Try to parse the line directly if it's not in the expected format
-            try {
-              const parsed = JSON.parse(line);
-              console.log('Parsed direct JSON:', parsed);
-              
-              if (parsed.type === 'text' || parsed.text || parsed.content) {
-                handleTextChunk(parsed.text || parsed.content || (parsed.type === 'text' ? parsed.text : ''));
-              } else if (parsed.choices && parsed.choices.length > 0) {
-                const content = parsed.choices[0].delta?.content || parsed.choices[0].message?.content;
-                if (content) {
-                  handleTextChunk(content);
-                }
-              }
-            } catch (e) {
-              console.log('Line is not JSON:', line);
-            }
-          }
-        }
-      } catch (e) {
-        console.error('Error processing stream chunk:', e);
-      }
-    } else if (message.type === 'STREAM_DONE') {
-      // End of stream
-      console.log('Stream done message received');
-      if (state.streamingMessage) {
-        state.messages.push(state.streamingMessage);
-        
-        // Replace streaming element with final message
-        const streamingElement = document.getElementById('streaming-message');
-        if (streamingElement) {
-          const finalElement = createMessageElement(state.streamingMessage);
-          messagesContainer.replaceChild(finalElement, streamingElement);
-        }
-        
-        state.streamingMessage = null;
-      }
-      
-      state.isLoading = false;
-      loadingIndicator.style.display = 'none';
-    } else if (message.type === 'API_ERROR') {
-      console.error('API error:', message.error);
-      state.isLoading = false;
-      loadingIndicator.style.display = 'none';
-      
-      // Show error message
-      const errorMessage = {
-        id: uuid.v4(),
-        role: 'assistant',
-        content: `Error: ${message.error}. Please try again.`,
-        createdAt: new Date().toISOString()
-      };
-      
-      messagesContainer.appendChild(createMessageElement(errorMessage));
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    // Add icon based on artifact type
+    let icon = '';
+    switch (artifactType) {
+      case 'code':
+        icon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16 18L22 12L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M8 6L2 12L8 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>`;
+        break;
+      case 'document':
+      default:
+        icon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M14 2V8H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M16 13H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M16 17H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 9H9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>`;
     }
-  };
+    
+    artifactLink.innerHTML = `
+      <div class="artifact-icon">${icon}</div>
+      <div class="artifact-info">
+        <div class="artifact-title">${artifactTitle || 'Untitled Artifact'}</div>
+        <div class="artifact-type">${artifactType || 'Document'}</div>
+      </div>
+      <button class="open-artifact-button">Open in App</button>
+    `;
+    
+    // Add event listener to open button
+    const openButton = artifactLink.querySelector('.open-artifact-button');
+    openButton.addEventListener('click', () => {
+      chrome.runtime.sendMessage({
+        type: 'OPEN_ARTIFACT',
+        artifactId: artifactId
+      });
+    });
+    
+    // Add to streaming message if it exists, otherwise to the last message
+    const targetMessage = document.getElementById('streaming-message') || 
+                        document.querySelector('.message:last-child');
+    
+    if (targetMessage) {
+      const contentElement = targetMessage.querySelector('.message-content');
+      if (contentElement) {
+        contentElement.appendChild(artifactLink);
+      }
+    }
+  }
   
   // Helper function to handle text chunks
   function handleTextChunk(text) {
@@ -274,10 +260,47 @@ function createChatInterface(rootElement, isAuthenticated) {
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
   }
   
+  // Message handler
+  const messageHandler = (message) => {
+    console.log('Received message in chat UI:', message.type, message);
+    
+    if (message.type === 'STREAM_CHUNK') {
+      try {
+        handleTextChunk(message.data);
+      } catch (error) {
+        console.error('Error handling text chunk:', error);
+      }
+    } else if (message.type === 'STREAM_DONE') {
+      // Handle stream completion
+      if (state.streamingMessage) {
+        state.messages.push(state.streamingMessage);
+        state.streamingMessage = null;
+      }
+      state.isLoading = false;
+      loadingIndicator.style.display = 'none';
+    } else if (message.type === 'API_ERROR') {
+      console.error('API error:', message.error);
+      state.isLoading = false;
+      loadingIndicator.style.display = 'none';
+      
+      // Show error message
+      const errorMessage = {
+        id: uuid.v4(),
+        role: 'assistant',
+        content: `Error: ${message.error}. Please try again.`,
+        createdAt: new Date().toISOString()
+      };
+      
+      messagesContainer.appendChild(createMessageElement(errorMessage));
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+  };
+  
+  // Add message listener
   chrome.runtime.onMessage.addListener(messageHandler);
   
-  // Return a cleanup function
+  // Return cleanup function
   return () => {
     chrome.runtime.onMessage.removeListener(messageHandler);
   };
-} 
+}
